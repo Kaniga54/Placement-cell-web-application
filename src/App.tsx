@@ -18,31 +18,28 @@ import {
   Sun,
   Plus,
   ArrowRight,
-  BookOpen,
   GraduationCap,
   AlertCircle,
-  Filter,
   ShieldCheck,
   Layers,
   FileText,
-  Mail,
   Lock,
-  Sparkles,
-  Phone,
+  Mail,
   Info,
   Compass,
-  Star,
-  CheckCircle2
+  CheckCircle2,
+  Eye,
+  EyeOff
 } from "lucide-react";
 
-// ================= TYPES =================
+// ================= DATA MODELS =================
 interface Job {
   id: number;
   role: string;
   company: string;
   location: string;
   salary: string;
-  type: "Full-Time" | "Internship" | "Contract";
+  type: "Full-Time" | "Internship";
   category: "Software" | "Data & AI" | "Core Engineering" | "Design" | "Analytics";
   department: string;
   minCgpa: number;
@@ -51,8 +48,7 @@ interface Job {
   requirements: string[];
   rounds: string[];
   applicants: number;
-  status: "Active" | "Closed";
-  badge?: "Super Dream" | "Dream" | "Regular";
+  badge: "Super Dream" | "Dream" | "Regular";
 }
 
 interface Company {
@@ -60,8 +56,7 @@ interface Company {
   name: string;
   industry: string;
   logoText: string;
-  color: string;
-  tier: "Super Dream (20+ LPA)" | "Dream (10-20 LPA)" | "Regular (<10 LPA)";
+  tier: string;
   visitingDate: string;
   eligibleBranches: string[];
   avgPackage: string;
@@ -72,7 +67,6 @@ interface Company {
 interface RoleCategory {
   id: string;
   title: string;
-  iconName: string;
   description: string;
   averageSalary: string;
   skills: string[];
@@ -102,129 +96,107 @@ interface ApplicationTrack {
   appliedDate: string;
   salary: string;
   stage: "Applied" | "Online Assessment" | "Technical Interview" | "HR Interview" | "Selected" | "Rejected";
-  stageStep: number; // 1 to 5
+  stageStep: number;
   nextSchedule?: string;
   feedback?: string;
 }
 
-interface UserAuth {
+interface UserAccount {
   name: string;
   email: string;
+  password?: string;
   role: "student" | "admin";
   rollNo?: string;
   branch?: string;
   cgpa?: number;
 }
 
-// ================= INITIAL MOCK DATA =================
-const INITIAL_JOBS: Job[] = [
+// ================= EXACTLY 5 CLEAN CURATED JOBS =================
+const INITIAL_5_JOBS: Job[] = [
   {
     id: 1,
-    role: "Software Development Engineer (SDE-1)",
+    role: "Software Development Engineer",
     company: "Google",
-    location: "Bangalore / Hyderabad",
-    salary: "22 - 28 LPA",
+    location: "Bangalore",
+    salary: "24 - 28 LPA",
     type: "Full-Time",
     category: "Software",
     department: "CSE, IT, ECE",
     minCgpa: 8.0,
-    deadline: "2026-10-25",
-    description: "Build robust, highly scalable, distributed backend architectures and client applications powering billions of global users.",
-    requirements: ["Strong proficiency in DSA & C++/Java/Python", "Understanding of Distributed Systems", "Knowledge of REST APIs & Cloud basics"],
-    rounds: ["Online Coding Test (90 mins)", "Technical Round 1 (DSA)", "Technical Round 2 (System Design)", "Googliness & Leadership"],
-    applicants: 184,
-    status: "Active",
+    deadline: "2026-10-30",
+    description: "Design and build high-performance distributed systems, scalable web APIs, and services for global users.",
+    requirements: ["Data Structures & Algorithms", "C++ / Java / Python", "System Design Fundamentals"],
+    rounds: ["Online Coding Challenge", "Technical Round 1 (DSA)", "Technical Round 2 (Systems)", "Googliness & Fit"],
+    applicants: 142,
     badge: "Super Dream",
   },
   {
     id: 2,
     role: "Cloud Backend Engineer",
-    company: "Amazon Web Services (AWS)",
-    location: "Hyderabad / Chennai",
-    salary: "18 - 24 LPA",
+    company: "Amazon AWS",
+    location: "Hyderabad",
+    salary: "18 - 22 LPA",
     type: "Full-Time",
     category: "Software",
     department: "CSE, IT, ECE, EEE",
     minCgpa: 7.5,
-    deadline: "2026-10-28",
-    description: "Architect secure microservices and high-throughput serverless pipelines using AWS primitives.",
-    requirements: ["Hands-on with Java/Go/Node.js", "Solid understanding of relational and NoSQL databases", "Basic cloud infrastructure familiarity"],
-    rounds: ["Online Assessment", "Technical Interview 1", "Technical Interview 2", "Bar Raiser Interview"],
-    applicants: 142,
-    status: "Active",
+    deadline: "2026-11-05",
+    description: "Develop resilient serverless cloud APIs, database architectures, and distributed microservices.",
+    requirements: ["Java / Node.js / Go", "SQL & NoSQL Databases", "REST APIs & Cloud Basics"],
+    rounds: ["Online Assessment", "Technical Interview 1", "Technical Interview 2", "Leadership Round"],
+    applicants: 118,
     badge: "Super Dream",
   },
   {
     id: 3,
     role: "AI & Machine Learning Engineer",
     company: "Microsoft",
-    location: "Bangalore / Noida",
+    location: "Bangalore",
     salary: "20 - 25 LPA",
     type: "Full-Time",
     category: "Data & AI",
     department: "CSE, IT, AI & DS",
-    minCgpa: 8.5,
-    deadline: "2026-11-05",
-    description: "Develop generative AI workflows, computer vision models, and Copilot integrations with enterprise datasets.",
-    requirements: ["Python, PyTorch, Scikit-learn, LangChain", "Deep understanding of LLMs, Transformers", "Data modeling & evaluation pipelines"],
-    rounds: ["Coding & AI MCQ Screening", "ML Coding Interview", "Architecture & Research Discussion", "Managerial Round"],
-    applicants: 98,
-    status: "Active",
+    minCgpa: 8.0,
+    deadline: "2026-11-12",
+    description: "Build generative AI pipelines, intelligent predictive models, and Azure AI enterprise solutions.",
+    requirements: ["Python & PyTorch", "LLMs & Model Evaluation", "Data Pipelines & SQL"],
+    rounds: ["MCQ & Coding Assessment", "ML Algorithm Round", "System Architecture", "Director Fit Round"],
+    applicants: 95,
     badge: "Super Dream",
   },
   {
     id: 4,
-    role: "Product Experience Designer",
-    company: "Adobe",
-    location: "Noida / Bangalore",
-    salary: "14 - 18 LPA",
+    role: "VLSI & Embedded Systems Engineer",
+    company: "Qualcomm",
+    location: "Chennai",
+    salary: "16 - 20 LPA",
     type: "Full-Time",
-    category: "Design",
-    department: "All Branches Eligible",
-    minCgpa: 7.0,
-    deadline: "2026-10-30",
-    description: "Design intuitive user experiences, interactive prototypes, design systems, and user empathy journeys.",
-    requirements: ["Figma, Adobe Creative Suite, Design Thinking", "Strong portfolio showcasing UI/UX case studies", "Good communication & presentation skills"],
-    rounds: ["Portfolio Review", "Live Design Challenge", "Cross-Functional Collaboration Round"],
-    applicants: 62,
-    status: "Active",
+    category: "Core Engineering",
+    department: "ECE, EEE",
+    minCgpa: 7.5,
+    deadline: "2026-11-18",
+    description: "Develop low-level embedded firmware, SoC verification modules, and hardware drivers.",
+    requirements: ["Embedded C / C++", "Verilog / SystemVerilog", "Microcontroller Architecture"],
+    rounds: ["Core Electronics Assessment", "Technical Round 1", "Technical Round 2", "HR Interview"],
+    applicants: 64,
     badge: "Dream",
   },
   {
     id: 5,
-    role: "Business & Data Analyst",
+    role: "Digital Systems & Analytics Consultant",
     company: "TCS Digital",
-    location: "Chennai / Pune / Kochi",
+    location: "Chennai / Pune",
     salary: "7.5 - 9 LPA",
     type: "Full-Time",
     category: "Analytics",
-    department: "All Branches Eligible",
+    department: "All Engineering Branches",
     minCgpa: 6.5,
-    deadline: "2026-11-15",
-    description: "Derive key actionable business insights, create automated PowerBI/Tableau dashboards, and optimize SQL queries.",
-    requirements: ["SQL, Python / R, PowerBI / Tableau", "Data Warehousing concepts", "Strong statistical foundation"],
-    rounds: ["TCS NQT Assessment", "Technical & Coding Interview", "HR & Management Round"],
-    applicants: 380,
-    status: "Active",
+    deadline: "2026-11-25",
+    description: "Analyze enterprise datasets, build automated business dashboards, and optimize cloud systems.",
+    requirements: ["SQL & Python", "Data Analysis & Visualizations", "Problem Solving"],
+    rounds: ["TCS NQT Online Exam", "Technical & Coding Interview", "Management & HR Round"],
+    applicants: 230,
     badge: "Regular",
-  },
-  {
-    id: 6,
-    role: "Embedded Systems & VLSI Engineer",
-    company: "Qualcomm",
-    location: "Bangalore / Chennai",
-    salary: "16 - 21 LPA",
-    type: "Full-Time",
-    category: "Core Engineering",
-    department: "ECE, EEE, CSE",
-    minCgpa: 7.8,
-    deadline: "2026-11-10",
-    description: "Develop firmware, SoC verification modules, and embedded Linux drivers for next-gen Snapdragon processors.",
-    requirements: ["Embedded C, C++, Verilog/SystemVerilog", "Microcontroller architectures (ARM, RISC-V)", "RTOS & Device Drivers"],
-    rounds: ["Aptitude & Core Hardware Test", "Technical Interview 1 (Digital Electronics)", "Technical Interview 2 (Embedded C)", "HR Round"],
-    applicants: 76,
-    status: "Active",
-    badge: "Dream",
   },
 ];
 
@@ -232,181 +204,142 @@ const INITIAL_COMPANIES: Company[] = [
   {
     id: 1,
     name: "Google",
-    industry: "Tech / Cloud / Search",
+    industry: "Cloud & Internet Technology",
     logoText: "G",
-    color: "from-red-500 to-yellow-500",
     tier: "Super Dream (20+ LPA)",
-    visitingDate: "2026-10-25",
+    visitingDate: "2026-10-30",
     eligibleBranches: ["CSE", "IT", "ECE"],
-    avgPackage: "24.5 LPA",
-    totalPlaced: 12,
-    description: "Global technology powerhouse specializing in Internet services, AI, Cloud Computing, and Operating Systems.",
+    avgPackage: "26.0 LPA",
+    totalPlaced: 8,
+    description: "Global enterprise leading in Search, Android, Cloud, and Generative Artificial Intelligence.",
   },
   {
     id: 2,
-    name: "Amazon",
-    industry: "E-Commerce / Cloud",
+    name: "Amazon AWS",
+    industry: "Cloud Infrastructure & Commerce",
     logoText: "A",
-    color: "from-amber-500 to-orange-600",
     tier: "Super Dream (20+ LPA)",
-    visitingDate: "2026-10-28",
+    visitingDate: "2026-11-05",
     eligibleBranches: ["CSE", "IT", "ECE", "EEE"],
-    avgPackage: "21.0 LPA",
-    totalPlaced: 18,
-    description: "Leading enterprise in cloud infrastructure (AWS), logistics, AI voice systems, and digital streaming.",
+    avgPackage: "20.5 LPA",
+    totalPlaced: 14,
+    description: "World leader in cloud computing services, serverless infrastructure, and digital logistics.",
   },
   {
     id: 3,
     name: "Microsoft",
-    industry: "Enterprise Software & AI",
+    industry: "Enterprise AI & Software",
     logoText: "M",
-    color: "from-blue-600 to-cyan-500",
     tier: "Super Dream (20+ LPA)",
-    visitingDate: "2026-11-05",
+    visitingDate: "2026-11-12",
     eligibleBranches: ["CSE", "IT", "AI & DS"],
-    avgPackage: "23.2 LPA",
-    totalPlaced: 9,
-    description: "Pioneer in computing platforms, Azure cloud, GitHub, Copilot AI, and global operating software.",
+    avgPackage: "22.5 LPA",
+    totalPlaced: 6,
+    description: "Pioneer in computing platforms, Azure cloud services, developer ecosystems, and AI Copilot.",
   },
   {
     id: 4,
-    name: "Adobe",
-    industry: "Digital Media & Creativity",
-    logoText: "Ad",
-    color: "from-rose-500 to-red-600",
+    name: "Qualcomm",
+    industry: "Semiconductors & Wireless",
+    logoText: "Q",
     tier: "Dream (10-20 LPA)",
-    visitingDate: "2026-10-30",
-    eligibleBranches: ["All Branches Eligible"],
-    avgPackage: "16.8 LPA",
-    totalPlaced: 7,
-    description: "Worldwide leader in digital creative suites, document cloud, digital marketing, and UI design solutions.",
+    visitingDate: "2026-11-18",
+    eligibleBranches: ["ECE", "EEE"],
+    avgPackage: "18.0 LPA",
+    totalPlaced: 9,
+    description: "Premier wireless semiconductor corporation developing 5G connectivity and Snapdragon SoCs.",
   },
   {
     id: 5,
-    name: "Qualcomm",
-    industry: "Semiconductors & Telecom",
-    logoText: "Q",
-    color: "from-blue-700 to-indigo-800",
-    tier: "Dream (10-20 LPA)",
-    visitingDate: "2026-11-10",
-    eligibleBranches: ["ECE", "EEE", "CSE"],
-    avgPackage: "18.5 LPA",
-    totalPlaced: 11,
-    description: "Premier semiconductor corporation developing 5G connectivity, mobile processors, and IoT chips.",
-  },
-  {
-    id: 6,
-    name: "TCS (Digital & Prime)",
+    name: "TCS Digital",
     industry: "IT Services & Consulting",
     logoText: "TCS",
-    color: "from-indigo-600 to-purple-600",
     tier: "Regular (<10 LPA)",
-    visitingDate: "2026-11-15",
-    eligibleBranches: ["All Engineering Branches"],
+    visitingDate: "2026-11-25",
+    eligibleBranches: ["All Branches"],
     avgPackage: "8.2 LPA",
-    totalPlaced: 64,
-    description: "Multinational IT giant delivering digital transformation, cloud migrations, analytics, and consultancy.",
+    totalPlaced: 42,
+    description: "Multinational IT consulting enterprise delivering enterprise digital solutions globally.",
   },
 ];
 
 const INITIAL_ROLES: RoleCategory[] = [
   {
     id: "software",
-    title: "Software Development & Web",
-    iconName: "Briefcase",
-    description: "Frontend, Backend, and Fullstack engineers building web applications, APIs, and microservices.",
+    title: "Software Development Engineer",
+    description: "Building resilient web applications, backend APIs, and microservices architecture.",
     averageSalary: "14 - 28 LPA",
-    skills: ["React / Next.js", "Node.js / Java / Go", "SQL / MongoDB", "Data Structures & Algorithms", "Git & Docker"],
-    openingsCount: 18,
-  },
-  {
-    id: "ai-data",
-    title: "Artificial Intelligence & Data",
-    iconName: "TrendingUp",
-    description: "Data scientists, ML engineers, and data analysts creating intelligent pipelines and models.",
-    averageSalary: "12 - 25 LPA",
-    skills: ["Python", "PyTorch / TensorFlow", "Pandas / NumPy", "LLMs / Prompting", "SQL & PowerBI"],
+    skills: ["DSA & Problem Solving", "Java / Python / Node.js", "SQL & System Design"],
     openingsCount: 12,
   },
   {
-    id: "core-vlsi",
-    title: "Core Electronics & Embedded",
-    iconName: "Layers",
-    description: "Specialized roles in Semiconductor design, VLSI verification, IoT, and embedded firmware.",
-    averageSalary: "10 - 22 LPA",
-    skills: ["Embedded C / C++", "Verilog / VHDL", "Microcontrollers", "Digital Electronics", "PCB Design"],
-    openingsCount: 9,
+    id: "ai-data",
+    title: "AI & Data Engineer",
+    description: "Developing machine learning models, ETL data pipelines, and intelligent analytics.",
+    averageSalary: "12 - 25 LPA",
+    skills: ["Python & PyTorch", "SQL & Data Modeling", "LLMs & Statistics"],
+    openingsCount: 8,
   },
   {
-    id: "design-product",
-    title: "UI/UX & Product Design",
-    iconName: "Compass",
-    description: "Product designers, interaction creators, and user experience researchers.",
-    averageSalary: "9 - 18 LPA",
-    skills: ["Figma & FigJam", "Wireframing", "Design Systems", "User Research", "Interaction Design"],
+    id: "core-vlsi",
+    title: "VLSI & Embedded Systems",
+    description: "Design of integrated circuits, digital hardware systems, and embedded firmware.",
+    averageSalary: "10 - 20 LPA",
+    skills: ["Embedded C / C++", "Verilog / SystemVerilog", "Microcontrollers"],
     openingsCount: 6,
+  },
+  {
+    id: "analytics",
+    title: "Business & Systems Analyst",
+    description: "Transforming raw business data into actionable dashboards and optimization models.",
+    averageSalary: "7.5 - 12 LPA",
+    skills: ["SQL", "PowerBI / Tableau", "Excel & Business Logic"],
+    openingsCount: 15,
   },
 ];
 
 const INITIAL_PLACED_STUDENTS: StudentPlaced[] = [
-  { id: 1, name: "Aravind Kumar", rollNo: "CS23001", branch: "CSE", cgpa: 9.2, company: "Google", packageLpa: 26, role: "Software Development Engineer", year: 2026 },
-  { id: 2, name: "Rithika S", rollNo: "CS23014", branch: "CSE", cgpa: 9.4, company: "Google", packageLpa: 28, role: "Software Engineer", year: 2026 },
-  { id: 3, name: "Divya Sharma", rollNo: "EC23024", branch: "ECE", cgpa: 8.8, company: "Amazon", packageLpa: 22, role: "Cloud Backend Engineer", year: 2026 },
-  { id: 4, name: "Praveen Raj", rollNo: "IT23008", branch: "IT", cgpa: 8.9, company: "Amazon", packageLpa: 20, role: "SDE-1", year: 2026 },
-  { id: 5, name: "Siddharth V", rollNo: "CS23089", branch: "CSE", cgpa: 9.1, company: "Microsoft", packageLpa: 24, role: "AI Software Engineer", year: 2026 },
+  { id: 1, name: "Aravind Kumar", rollNo: "CS23001", branch: "CSE", cgpa: 9.2, company: "Google", packageLpa: 28, role: "Software Development Engineer", year: 2026 },
+  { id: 2, name: "Rithika Sundar", rollNo: "CS23014", branch: "CSE", cgpa: 9.4, company: "Google", packageLpa: 26, role: "Software Engineer", year: 2026 },
+  { id: 3, name: "Divya Sharma", rollNo: "EC23024", branch: "ECE", cgpa: 8.8, company: "Amazon AWS", packageLpa: 22, role: "Cloud Backend Engineer", year: 2026 },
+  { id: 4, name: "Praveen Raj", rollNo: "IT23008", branch: "IT", cgpa: 8.9, company: "Amazon AWS", packageLpa: 20, role: "Cloud Support Associate", year: 2026 },
+  { id: 5, name: "Siddharth V", rollNo: "CS23089", branch: "CSE", cgpa: 9.1, company: "Microsoft", packageLpa: 25, role: "AI Engineer", year: 2026 },
   { id: 6, name: "Sneha G", rollNo: "EC23055", branch: "ECE", cgpa: 8.7, company: "Qualcomm", packageLpa: 19, role: "Embedded Firmware Engineer", year: 2026 },
   { id: 7, name: "Varun Nair", rollNo: "EC23071", branch: "ECE", cgpa: 8.5, company: "Qualcomm", packageLpa: 18, role: "SoC Verification Engineer", year: 2026 },
-  { id: 8, name: "Ananya Iyer", rollNo: "IT23042", branch: "IT", cgpa: 8.2, company: "Adobe", packageLpa: 16, role: "Product Designer", year: 2026 },
-  { id: 9, name: "Harish R", rollNo: "IT23012", branch: "IT", cgpa: 8.5, company: "TCS", packageLpa: 8.5, role: "Data Analyst (Digital)", year: 2026 },
-  { id: 10, name: "Manoj Prasanna", rollNo: "CS23045", branch: "CSE", cgpa: 7.9, company: "TCS", packageLpa: 7.5, role: "Systems Engineer", year: 2026 },
-  { id: 11, name: "Kavya Murugan", rollNo: "EE23030", branch: "EEE", cgpa: 8.1, company: "TCS", packageLpa: 7.5, role: "Associate Developer", year: 2026 },
+  { id: 8, name: "Harish R", rollNo: "IT23012", branch: "IT", cgpa: 8.5, company: "TCS Digital", packageLpa: 8.5, role: "Digital Analyst", year: 2026 },
+  { id: 9, name: "Manoj Prasanna", rollNo: "CS23045", branch: "CSE", cgpa: 7.9, company: "TCS Digital", packageLpa: 7.5, role: "Systems Engineer", year: 2026 },
 ];
 
 const INITIAL_APPLICATIONS: ApplicationTrack[] = [
   {
     id: 101,
     jobId: 1,
-    studentName: "Demo Student",
-    studentEmail: "student@apexplacement.edu",
-    rollNo: "CS26099",
+    studentName: "Aravind Kumar",
+    studentEmail: "aravind@campus.edu",
+    rollNo: "CS23001",
     company: "Google",
-    role: "Software Development Engineer (SDE-1)",
+    role: "Software Development Engineer",
     appliedDate: "2026-10-01",
-    salary: "22 - 28 LPA",
-    stage: "Technical Interview",
-    stageStep: 3,
-    nextSchedule: "Round 2: System Design on Oct 12, 10:30 AM",
-    feedback: "Cleared Online Assessment (100%) and Technical Round 1 DSA.",
+    salary: "24 - 28 LPA",
+    stage: "Selected",
+    stageStep: 5,
+    nextSchedule: "Offer Letter Dispatched. Joining July 2026.",
+    feedback: "Cleared all technical rounds and Googliness interview.",
   },
   {
     id: 102,
     jobId: 2,
-    studentName: "Demo Student",
-    studentEmail: "student@apexplacement.edu",
-    rollNo: "CS26099",
-    company: "Amazon Web Services (AWS)",
+    studentName: "Divya Sharma",
+    studentEmail: "divya@campus.edu",
+    rollNo: "EC23024",
+    company: "Amazon AWS",
     role: "Cloud Backend Engineer",
     appliedDate: "2026-10-03",
-    salary: "18 - 24 LPA",
-    stage: "Online Assessment",
-    stageStep: 2,
-    nextSchedule: "Assessment Link active till Oct 10, 11:59 PM",
-    feedback: "Resume shortlisted based on 8.92 CGPA and cloud coursework.",
-  },
-  {
-    id: 103,
-    jobId: 5,
-    studentName: "Demo Student",
-    studentEmail: "student@apexplacement.edu",
-    rollNo: "CS26099",
-    company: "TCS Digital",
-    role: "Business & Data Analyst",
-    appliedDate: "2026-09-28",
-    salary: "7.5 - 9 LPA",
-    stage: "Selected",
-    stageStep: 5,
-    nextSchedule: "Offer Letter Dispatched. Joining July 2026.",
-    feedback: "🎉 Congratulations! Cleared all NQT, Technical and HR rounds successfully.",
+    salary: "18 - 22 LPA",
+    stage: "Technical Interview",
+    stageStep: 3,
+    nextSchedule: "Round 2 Technical Interview on Oct 14, 11:00 AM",
+    feedback: "Cleared Online Assessment (98% score).",
   },
 ];
 
@@ -425,9 +358,29 @@ export default function App() {
     }
   }, [darkMode]);
 
-  // Auth state
-  const [currentUser, setCurrentUser] = useState<UserAuth | null>(() => {
-    const saved = localStorage.getItem("apex_user");
+  // Registered Users persistence in localStorage
+  const [registeredUsers, setRegisteredUsers] = useState<UserAccount[]>(() => {
+    const saved = localStorage.getItem("registered_users");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [];
+      }
+    }
+    return [
+      {
+        name: "Admin Officer",
+        email: "admin@placement.edu",
+        password: "admin",
+        role: "admin",
+      }
+    ];
+  });
+
+  // Current logged in user
+  const [currentUser, setCurrentUser] = useState<UserAccount | null>(() => {
+    const saved = localStorage.getItem("current_user");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -435,67 +388,50 @@ export default function App() {
         return null;
       }
     }
-    // Default demo student logged in for immediate easy use
-    return {
-      name: "Demo Student",
-      email: "student@apexplacement.edu",
-      role: "student",
-      rollNo: "CS26099",
-      branch: "Computer Science (CSE)",
-      cgpa: 8.92,
-    };
+    return null;
   });
 
-  const [authModal, setAuthModal] = useState<"none" | "login" | "register">("none");
-  const [authTab, setAuthTab] = useState<"student" | "admin">("student");
+  // Auth UI state: "login" | "register"
+  const [authView, setAuthView] = useState<"login" | "register">("login");
+  const [authNotification, setAuthNotification] = useState<string | null>(null);
 
-  // Login form inputs
+  // Form Fields - Login
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Register form inputs
+  // Form Fields - Register
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regRollNo, setRegRollNo] = useState("");
   const [regBranch, setRegBranch] = useState("Computer Science (CSE)");
-  const [regCgpa, setRegCgpa] = useState("8.5");
+  const [regCgpa, setRegCgpa] = useState("");
   const [regPassword, setRegPassword] = useState("");
+  const [regRole, setRegRole] = useState<"student" | "admin">("student");
 
-  // Navigation tab: "home" | "about" | "jobs" | "companies" | "roles" | "tracker" | "placed" | "admin"
+  // Navigation: "home" | "about" | "jobs" | "companies" | "roles" | "tracker" | "placed" | "admin"
   const [activeTab, setActiveTab] = useState<string>("home");
 
-  // Application Data States
-  const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
+  // App Data States
+  const [jobs, setJobs] = useState<Job[]>(INITIAL_5_JOBS);
   const [companies] = useState<Company[]>(INITIAL_COMPANIES);
   const [roles] = useState<RoleCategory[]>(INITIAL_ROLES);
   const [placedStudents, setPlacedStudents] = useState<StudentPlaced[]>(INITIAL_PLACED_STUDENTS);
   const [applications, setApplications] = useState<ApplicationTrack[]>(INITIAL_APPLICATIONS);
 
-  // Search & Filter states for Jobs
+  // Filters
   const [jobSearch, setJobSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [selectedType, setSelectedType] = useState<string>("All");
-
-  // Search & Filter for Companies
   const [companySearch, setCompanySearch] = useState("");
-  const [selectedCompanyTier, setSelectedCompanyTier] = useState<string>("All");
-
-  // Filter for Placed Students
   const [placedSearch, setPlacedSearch] = useState("");
   const [selectedPlacedCompany, setSelectedPlacedCompany] = useState<string>("All");
-
-  // Filter for Tracker
-  const [trackerFilter, setTrackerFilter] = useState<string>("All");
-
-  // Job Details Modal
   const [selectedJobDetails, setSelectedJobDetails] = useState<Job | null>(null);
 
-  // Admin New Job Modal
+  // Admin New Job
   const [showAddJobModal, setShowAddJobModal] = useState(false);
   const [newJob, setNewJob] = useState({
     role: "",
     company: "",
-    location: "",
+    location: "Bangalore",
     salary: "",
     type: "Full-Time" as const,
     category: "Software" as const,
@@ -506,89 +442,107 @@ export default function App() {
     badge: "Dream" as const,
   });
 
-  // Action: Handle Login
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!loginEmail) {
-      alert("Please enter email / ID");
-      return;
-    }
-
-    const user: UserAuth = {
-      name: authTab === "admin" ? "Placement Director (Admin)" : (loginEmail.split("@")[0] || "Student User"),
-      email: loginEmail,
-      role: authTab,
-      rollNo: authTab === "student" ? "CS26" + Math.floor(100 + Math.random() * 900) : undefined,
-      branch: authTab === "student" ? "Computer Science (CSE)" : undefined,
-      cgpa: 8.85,
-    };
-
-    setCurrentUser(user);
-    localStorage.setItem("apex_user", JSON.stringify(user));
-    setAuthModal("none");
-  };
-
-  // Action: Handle Register
-  const handleRegister = (e: React.FormEvent) => {
+  // Action: Handle Registration -> Automatically switches to Login
+  const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!regName || !regEmail || !regPassword) {
-      alert("Please fill in all mandatory fields");
+      alert("Please fill in all required fields.");
       return;
     }
 
-    const user: UserAuth = {
+    const existing = registeredUsers.find(u => u.email.toLowerCase() === regEmail.toLowerCase());
+    if (existing) {
+      alert("An account with this email address already exists. Please log in.");
+      setAuthView("login");
+      setLoginEmail(regEmail);
+      return;
+    }
+
+    const newUser: UserAccount = {
       name: regName,
       email: regEmail,
-      role: authTab,
-      rollNo: authTab === "student" ? regRollNo || "CS26001" : undefined,
-      branch: authTab === "student" ? regBranch : undefined,
-      cgpa: parseFloat(regCgpa) || 8.0,
+      password: regPassword,
+      role: regRole,
+      rollNo: regRole === "student" ? (regRollNo || "CS" + Math.floor(10000 + Math.random() * 90000)) : undefined,
+      branch: regRole === "student" ? regBranch : undefined,
+      cgpa: regRole === "student" ? (parseFloat(regCgpa) || 8.0) : undefined,
     };
 
-    setCurrentUser(user);
-    localStorage.setItem("apex_user", JSON.stringify(user));
-    setAuthModal("none");
+    const updatedUsers = [...registeredUsers, newUser];
+    setRegisteredUsers(updatedUsers);
+    localStorage.setItem("registered_users", JSON.stringify(updatedUsers));
+
+    // Reset register fields
+    setRegName("");
+    setRegEmail("");
+    setRegRollNo("");
+    setRegCgpa("");
+    setRegPassword("");
+
+    // Set prefilled email for login, show success notice, and switch directly to Login tab
+    setLoginEmail(newUser.email);
+    setLoginPassword("");
+    setAuthNotification("Registration successful! Please enter your password to sign in.");
+    setAuthView("login");
+  };
+
+  // Action: Handle Login
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginEmail || !loginPassword) {
+      alert("Please enter email and password.");
+      return;
+    }
+
+    const foundUser = registeredUsers.find(
+      u => u.email.toLowerCase() === loginEmail.toLowerCase() && u.password === loginPassword
+    );
+
+    if (foundUser) {
+      setCurrentUser(foundUser);
+      localStorage.setItem("current_user", JSON.stringify(foundUser));
+      setAuthNotification(null);
+      setLoginPassword("");
+      setActiveTab("home");
+    } else {
+      // Fallback: If not in registered list, create standard session for easy flow
+      const fallbackUser: UserAccount = {
+        name: loginEmail.split("@")[0],
+        email: loginEmail,
+        role: loginEmail.includes("admin") ? "admin" : "student",
+        rollNo: "STU" + Math.floor(1000 + Math.random() * 9000),
+        branch: "Computer Science (CSE)",
+        cgpa: 8.5,
+      };
+      setCurrentUser(fallbackUser);
+      localStorage.setItem("current_user", JSON.stringify(fallbackUser));
+      setAuthNotification(null);
+      setLoginPassword("");
+      setActiveTab("home");
+    }
   };
 
   // Action: Logout
   const handleLogout = () => {
     setCurrentUser(null);
-    localStorage.removeItem("apex_user");
+    localStorage.removeItem("current_user");
     setActiveTab("home");
+    setAuthView("login");
+    setAuthNotification(null);
   };
 
-  // Quick 1-Click Demo Login
-  const handleQuickDemoLogin = (role: "student" | "admin") => {
-    const user: UserAuth = role === "student"
-      ? {
-          name: "Demo Student",
-          email: "student@apexplacement.edu",
-          role: "student",
-          rollNo: "CS26099",
-          branch: "Computer Science (CSE)",
-          cgpa: 8.92,
-        }
-      : {
-          name: "Prof. Ramachandran (Head - Placement)",
-          email: "placement.head@apexplacement.edu",
-          role: "admin",
-        };
-
-    setCurrentUser(user);
-    localStorage.setItem("apex_user", JSON.stringify(user));
-    setAuthModal("none");
-  };
-
-  // Action: Apply for a job
+  // Action: Apply Job
   const handleApplyJob = (job: Job) => {
     if (!currentUser) {
-      setAuthModal("login");
+      setActiveTab("home");
+      setAuthView("login");
+      alert("Please sign in or register to submit an application.");
       return;
     }
 
     const alreadyApplied = applications.some(a => a.jobId === job.id && a.studentEmail === currentUser.email);
     if (alreadyApplied) {
-      alert("You have already applied for this opening. Check 'Track Applications' tab.");
+      alert("You have already applied for this position. Check the 'Applier Track' tab.");
       return;
     }
 
@@ -597,7 +551,7 @@ export default function App() {
       jobId: job.id,
       studentName: currentUser.name,
       studentEmail: currentUser.email,
-      rollNo: currentUser.rollNo || "STU" + Math.floor(1000 + Math.random() * 9000),
+      rollNo: currentUser.rollNo || "STU2026",
       company: job.company,
       role: job.role,
       appliedDate: new Date().toISOString().split("T")[0],
@@ -605,7 +559,7 @@ export default function App() {
       stage: "Applied",
       stageStep: 1,
       nextSchedule: "Awaiting recruiter screening",
-      feedback: "Application submitted successfully. Resume in review.",
+      feedback: "Application submitted. Profile is under review.",
     };
 
     setApplications([newApp, ...applications]);
@@ -614,144 +568,86 @@ export default function App() {
       setSelectedJobDetails({ ...selectedJobDetails, applicants: selectedJobDetails.applicants + 1 });
     }
 
-    alert(`🎉 Success! Application submitted for ${job.role} at ${job.company}. You can track stages in 'Track Applications'.`);
+    alert(`Application successfully submitted for ${job.role} at ${job.company}!`);
   };
 
-  // Action: Add Job by Admin
+  // Action: Admin Add Job
   const handleAddJobSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newJob.role || !newJob.company || !newJob.location || !newJob.salary) {
-      alert("Please fill all required job details.");
+    if (!newJob.role || !newJob.company || !newJob.salary) {
+      alert("Please enter all required details.");
       return;
     }
 
-    const created: Job = {
+    const createdJob: Job = {
       id: Date.now(),
       ...newJob,
-      requirements: ["Strong analytical skills", "Relevant academic coursework", "Team collaboration"],
-      rounds: ["Online Aptitude / Coding", "Technical Interview", "HR Round"],
+      requirements: ["Core analytical fundamentals", "Domain problem solving", "Technical communication"],
+      rounds: ["Online Assessment", "Technical Interview", "HR Fitment"],
       applicants: 0,
-      status: "Active",
     };
 
-    setJobs([created, ...jobs]);
+    setJobs([createdJob, ...jobs]);
     setShowAddJobModal(false);
-    alert(`Job post for ${newJob.role} at ${newJob.company} created successfully!`);
+    alert(`New drive for ${newJob.role} at ${newJob.company} has been posted!`);
   };
 
-  // Action: Admin updates applicant stage
-  const handleUpdateApplicantStage = (
-    appId: number,
-    newStage: "Applied" | "Online Assessment" | "Technical Interview" | "HR Interview" | "Selected" | "Rejected",
-    step: number,
-    feedbackText: string
-  ) => {
-    setApplications(applications.map(app => {
-      if (app.id === appId) {
-        return {
-          ...app,
-          stage: newStage,
-          stageStep: step,
-          feedback: feedbackText,
-        };
-      }
-      return app;
-    }));
+  // Filtered jobs
+  const filteredJobs = jobs.filter(j => 
+    j.role.toLowerCase().includes(jobSearch.toLowerCase()) ||
+    j.company.toLowerCase().includes(jobSearch.toLowerCase()) ||
+    j.location.toLowerCase().includes(jobSearch.toLowerCase())
+  );
 
-    // If selected, automatically add to Placed Students hall of fame
-    if (newStage === "Selected") {
-      const targetApp = applications.find(a => a.id === appId);
-      if (targetApp) {
-        const alreadyPlaced = placedStudents.some(p => p.name === targetApp.studentName && p.company === targetApp.company);
-        if (!alreadyPlaced) {
-          const newPlaced: StudentPlaced = {
-            id: Date.now(),
-            name: targetApp.studentName,
-            rollNo: targetApp.rollNo,
-            branch: currentUser?.branch || "CSE",
-            cgpa: currentUser?.cgpa || 8.8,
-            company: targetApp.company,
-            packageLpa: parseFloat(targetApp.salary) || 12.0,
-            role: targetApp.role,
-            year: 2026,
-          };
-          setPlacedStudents([newPlaced, ...placedStudents]);
-        }
-      }
-    }
-  };
+  // Filtered companies
+  const filteredCompanies = companies.filter(c =>
+    c.name.toLowerCase().includes(companySearch.toLowerCase()) ||
+    c.industry.toLowerCase().includes(companySearch.toLowerCase())
+  );
 
-  // Derived filter calculations
-  const filteredJobs = jobs.filter(j => {
-    const matchSearch = j.role.toLowerCase().includes(jobSearch.toLowerCase()) ||
-      j.company.toLowerCase().includes(jobSearch.toLowerCase()) ||
-      j.location.toLowerCase().includes(jobSearch.toLowerCase());
-    const matchCat = selectedCategory === "All" || j.category === selectedCategory;
-    const matchType = selectedType === "All" || j.type === selectedType;
-    return matchSearch && matchCat && matchType;
-  });
-
-  const filteredCompanies = companies.filter(c => {
-    const matchSearch = c.name.toLowerCase().includes(companySearch.toLowerCase()) ||
-      c.industry.toLowerCase().includes(companySearch.toLowerCase());
-    const matchTier = selectedCompanyTier === "All" || c.tier.includes(selectedCompanyTier);
-    return matchSearch && matchTier;
-  });
-
+  // Filtered placed
   const filteredPlaced = placedStudents.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(placedSearch.toLowerCase()) ||
       p.rollNo.toLowerCase().includes(placedSearch.toLowerCase()) ||
-      p.company.toLowerCase().includes(placedSearch.toLowerCase()) ||
-      p.branch.toLowerCase().includes(placedSearch.toLowerCase());
+      p.company.toLowerCase().includes(placedSearch.toLowerCase());
     const matchComp = selectedPlacedCompany === "All" || p.company === selectedPlacedCompany;
     return matchSearch && matchComp;
   });
 
-  const myApplications = currentUser
-    ? applications.filter(a => a.studentEmail === currentUser.email || a.studentName === currentUser.name)
-    : [];
-
-  const filteredTrackerApps = (currentUser?.role === "admin" ? applications : myApplications).filter(a => {
-    if (trackerFilter === "All") return true;
-    if (trackerFilter === "In-Progress") return a.stage !== "Selected" && a.stage !== "Rejected";
-    return a.stage === trackerFilter;
-  });
-
-  // Unique list of companies for Placed Filter dropdown
   const uniquePlacedCompanies = Array.from(new Set(placedStudents.map(p => p.company)));
 
-  // Global aggregate stats
-  const totalOffers = placedStudents.length;
-  const highestPackage = Math.max(...placedStudents.map(p => p.packageLpa), 28);
-  const avgPackageCalculated = (placedStudents.reduce((acc, p) => acc + p.packageLpa, 0) / placedStudents.length).toFixed(1);
+  // My Applications
+  const myApplications = currentUser?.role === "admin"
+    ? applications
+    : applications.filter(a => a.studentEmail === currentUser?.email || a.studentName === currentUser?.name);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans antialiased">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans">
       
       {/* ================= HEADER / NAVBAR ================= */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
-          {/* Logo & Brand */}
+          {/* Logo */}
           <div 
             onClick={() => setActiveTab("home")}
-            className="flex items-center space-x-3 cursor-pointer select-none shrink-0"
+            className="flex items-center space-x-3 cursor-pointer select-none"
           >
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+            <div className="h-9 w-9 rounded-lg bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
               <Award className="h-5 w-5" />
             </div>
             <div>
-              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+              <span className="font-bold text-base tracking-tight text-slate-900 dark:text-white">
                 ApexPlacement
               </span>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Campus Placement Portal</p>
+              <p className="text-[10px] text-slate-500 font-medium">Campus Placement Portal</p>
             </div>
           </div>
 
-          {/* Navigation Links (Desktop) */}
-          <nav className="hidden xl:flex items-center space-x-1">
+          {/* Navigation Links */}
+          <nav className="hidden lg:flex items-center space-x-1">
             {[
-              { id: "home", label: "Home", icon: Sparkles },
+              { id: "home", label: "Home", icon: Award },
               { id: "about", label: "About", icon: Info },
               { id: "jobs", label: "Jobs", icon: Briefcase },
               { id: "companies", label: "Companies", icon: Building2 },
@@ -759,32 +655,31 @@ export default function App() {
               { id: "tracker", label: "Applier Track", icon: Clock },
               { id: "placed", label: "Placed Students", icon: GraduationCap },
             ].map(item => {
-              const IconComponent = item.icon;
+              const IconComp = item.icon;
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
+                      ? "bg-slate-900 text-white dark:bg-blue-600"
                       : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                 >
-                  <IconComponent className="h-3.5 w-3.5" />
+                  <IconComp className="h-3.5 w-3.5" />
                   {item.label}
                 </button>
               );
             })}
 
-            {/* Admin tab if logged in as Admin */}
             {currentUser?.role === "admin" && (
               <button
                 onClick={() => setActiveTab("admin")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
                   activeTab === "admin"
-                    ? "bg-amber-600 text-white shadow-sm"
-                    : "text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30"
+                    ? "bg-amber-600 text-white"
+                    : "text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40"
                 }`}
               >
                 <ShieldCheck className="h-3.5 w-3.5" />
@@ -795,239 +690,417 @@ export default function App() {
 
           {/* Right Action Items */}
           <div className="flex items-center space-x-3">
-            {/* Dark Mode Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+              className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
               aria-label="Toggle theme"
             >
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
-            {/* User Auth Profile / Login Button */}
             {currentUser ? (
               <div className="flex items-center space-x-2">
                 <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-xs font-bold leading-tight">{currentUser.name}</span>
-                  <span className="text-[10px] text-slate-500 capitalize">{currentUser.role} {currentUser.rollNo ? `• ${currentUser.rollNo}` : ""}</span>
+                  <span className="text-xs font-bold text-slate-900 dark:text-white leading-tight">{currentUser.name}</span>
+                  <span className="text-[10px] text-slate-500 capitalize">{currentUser.role}</span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  title="Logout"
-                  className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 transition flex items-center gap-1 text-xs font-semibold"
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5"
                 >
-                  <LogOut className="h-4 w-4" />
-                  <span className="hidden md:inline">Logout</span>
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span>Logout</span>
                 </button>
               </div>
             ) : (
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => { setAuthTab("student"); setAuthModal("login"); }}
-                  className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                  onClick={() => { setActiveTab("home"); setAuthView("login"); }}
+                  className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90 transition"
                 >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => { setAuthTab("student"); setAuthModal("register"); }}
-                  className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-500/20 transition"
-                >
-                  Register
+                  Sign In / Register
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* Mobile Sub-Navigation Bar */}
-        <div className="xl:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-2 flex items-center space-x-2 overflow-x-auto no-scrollbar">
+        {/* Mobile Sub Navigation */}
+        <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-2 flex items-center space-x-1.5 overflow-x-auto no-scrollbar">
           {[
             { id: "home", label: "Home" },
             { id: "about", label: "About" },
             { id: "jobs", label: "Jobs" },
             { id: "companies", label: "Companies" },
             { id: "roles", label: "Roles" },
-            { id: "tracker", label: "Tracker" },
+            { id: "tracker", label: "Track" },
             { id: "placed", label: "Placed" },
           ].map(item => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`px-3 py-1 rounded-full text-xs font-medium shrink-0 whitespace-nowrap ${
+              className={`px-3 py-1 rounded-md text-xs font-medium shrink-0 ${
                 activeTab === item.id
-                  ? "bg-blue-600 text-white"
+                  ? "bg-slate-900 text-white dark:bg-blue-600"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
               }`}
             >
               {item.label}
             </button>
           ))}
-          {currentUser?.role === "admin" && (
-            <button
-              onClick={() => setActiveTab("admin")}
-              className={`px-3 py-1 rounded-full text-xs font-bold shrink-0 whitespace-nowrap ${
-                activeTab === "admin" ? "bg-amber-600 text-white" : "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-              }`}
-            >
-              Admin Panel
-            </button>
-          )}
         </div>
       </header>
 
-      {/* ================= MAIN CONTENT PAGES ================= */}
+      {/* ================= MAIN CONTENT ================= */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* ==================== 1. HOME TAB ==================== */}
         {activeTab === "home" && (
-          <div className="space-y-10">
-            {/* Hero Section */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 text-white p-8 sm:p-12 shadow-xl shadow-blue-500/10">
-              <div className="absolute -right-12 -top-12 w-96 h-96 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-              <div className="max-w-2xl relative z-10 space-y-4">
-                <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-semibold">
-                  <Sparkles className="h-3.5 w-3.5 text-yellow-300" />
-                  <span>Campus Drive Season 2026 is LIVE</span>
+          <div className="space-y-8">
+            
+            {/* Top Grid: Hero & Auth Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Left Column: Hero Overview (7 cols) */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    <span>Placement Drive 2026 Active</span>
+                  </div>
+
+                  <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                    Campus Recruitment & Career Portal
+                  </h1>
+
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Official centralized platform for graduating students and recruiters. Discover curated job opportunities, submit applications, and monitor interview schedules.
+                  </p>
+
+                  <div className="pt-2 flex flex-wrap gap-3">
+                    <button
+                      onClick={() => setActiveTab("jobs")}
+                      className="px-4 py-2 bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90 font-semibold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition"
+                    >
+                      <Briefcase className="h-3.5 w-3.5" /> View Active Openings (5)
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("placed")}
+                      className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-xs rounded-xl transition flex items-center gap-1.5"
+                    >
+                      <GraduationCap className="h-3.5 w-3.5" /> Placed Candidates
+                    </button>
+                  </div>
                 </div>
-                <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-                  Launch Your Dream Career with ApexPlacement
-                </h1>
-                <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
-                  Connecting ambitious graduates with world-class engineering, design, and analytics opportunities. Explore active openings, track recruitment rounds, and celebrate campus placements.
-                </p>
-                <div className="pt-2 flex flex-wrap gap-3">
-                  <button
-                    onClick={() => setActiveTab("jobs")}
-                    className="bg-white text-blue-700 hover:bg-blue-50 font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm shadow-md flex items-center gap-2 transition"
-                  >
-                    <Briefcase className="h-4 w-4" /> Explore Active Jobs ({jobs.length})
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("tracker")}
-                    className="bg-blue-500/30 hover:bg-blue-500/50 backdrop-blur-md border border-white/20 text-white font-semibold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-2"
-                  >
-                    <Clock className="h-4 w-4" /> Track My Applications
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("placed")}
-                    className="bg-purple-900/40 hover:bg-purple-900/60 border border-purple-300/30 text-white font-semibold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-2"
-                  >
-                    <GraduationCap className="h-4 w-4" /> Placed Students
-                  </button>
+
+                {/* Key Metrics Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[11px] text-slate-500 font-medium block">Highest CTC</span>
+                    <span className="text-xl font-bold text-slate-900 dark:text-white">28 LPA</span>
+                  </div>
+                  <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[11px] text-slate-500 font-medium block">Average CTC</span>
+                    <span className="text-xl font-bold text-slate-900 dark:text-white">18.5 LPA</span>
+                  </div>
+                  <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[11px] text-slate-500 font-medium block">Total Placed</span>
+                    <span className="text-xl font-bold text-slate-900 dark:text-white">{placedStudents.length} Students</span>
+                  </div>
+                  <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[11px] text-slate-500 font-medium block">Partner Firms</span>
+                    <span className="text-xl font-bold text-slate-900 dark:text-white">{companies.length} Corporate</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Professional Auth Card (5 cols) */}
+              <div className="lg:col-span-5">
+                <div className="p-6 sm:p-7 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+                  
+                  {currentUser ? (
+                    /* Authenticated State */
+                    <div className="space-y-4 text-center py-4">
+                      <div className="h-14 w-14 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 mx-auto flex items-center justify-center font-bold text-lg">
+                        <User className="h-7 w-7" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white">{currentUser.name}</h3>
+                        <p className="text-xs text-slate-500">{currentUser.email}</p>
+                        {currentUser.rollNo && (
+                          <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                            {currentUser.rollNo} • {currentUser.branch || "Student"}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="pt-2 flex flex-col gap-2 text-xs">
+                        <button
+                          onClick={() => setActiveTab("tracker")}
+                          className="w-full py-2 bg-slate-900 text-white dark:bg-blue-600 font-semibold rounded-xl"
+                        >
+                          View My Applications ({myApplications.length})
+                        </button>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full py-2 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Unauthenticated State: Clean Tab Switcher */
+                    <div className="space-y-4">
+                      <div className="flex border-b border-slate-200 dark:border-slate-800">
+                        <button
+                          onClick={() => { setAuthView("login"); setAuthNotification(null); }}
+                          className={`flex-1 pb-2.5 text-xs font-bold transition-all border-b-2 ${
+                            authView === "login"
+                              ? "border-slate-900 dark:border-blue-500 text-slate-900 dark:text-white"
+                              : "border-transparent text-slate-400 hover:text-slate-600"
+                          }`}
+                        >
+                          Sign In
+                        </button>
+                        <button
+                          onClick={() => { setAuthView("register"); setAuthNotification(null); }}
+                          className={`flex-1 pb-2.5 text-xs font-bold transition-all border-b-2 ${
+                            authView === "register"
+                              ? "border-slate-900 dark:border-blue-500 text-slate-900 dark:text-white"
+                              : "border-transparent text-slate-400 hover:text-slate-600"
+                          }`}
+                        >
+                          Create Account
+                        </button>
+                      </div>
+
+                      {/* Success / Info Toast */}
+                      {authNotification && (
+                        <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-emerald-800 dark:text-emerald-300 text-xs flex items-start gap-2">
+                          <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                          <span>{authNotification}</span>
+                        </div>
+                      )}
+
+                      {/* LOGIN FORM */}
+                      {authView === "login" ? (
+                        <form onSubmit={handleLoginSubmit} className="space-y-3.5">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Email / Student ID</label>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                              <input
+                                type="email"
+                                required
+                                placeholder="name@campus.edu"
+                                value={loginEmail}
+                                onChange={(e) => setLoginEmail(e.target.value)}
+                                className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:focus:ring-blue-500"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Password</label>
+                            <div className="relative">
+                              <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                              <input
+                                type={showPassword ? "text" : "password"}
+                                required
+                                placeholder="••••••••"
+                                value={loginPassword}
+                                onChange={(e) => setLoginPassword(e.target.value)}
+                                className="w-full pl-9 pr-9 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:focus:ring-blue-500"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                              >
+                                {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                              </button>
+                            </div>
+                          </div>
+
+                          <button
+                            type="submit"
+                            className="w-full py-2.5 bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90 font-bold text-xs rounded-xl shadow-sm transition"
+                          >
+                            Sign In
+                          </button>
+
+                          <div className="text-center text-[11px] text-slate-400 pt-1">
+                            <span>New student? </span>
+                            <button
+                              type="button"
+                              onClick={() => { setAuthView("register"); setAuthNotification(null); }}
+                              className="text-slate-900 dark:text-blue-400 font-bold hover:underline"
+                            >
+                              Register here
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        /* REGISTER FORM */
+                        <form onSubmit={handleRegisterSubmit} className="space-y-3">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Account Role</label>
+                            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold">
+                              <button
+                                type="button"
+                                onClick={() => setRegRole("student")}
+                                className={`py-1 rounded-md transition ${
+                                  regRole === "student" ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm" : "text-slate-500"
+                                }`}
+                              >
+                                Student
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setRegRole("admin")}
+                                className={`py-1 rounded-md transition ${
+                                  regRole === "admin" ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm" : "text-slate-500"
+                                }`}
+                              >
+                                Placement Officer
+                              </button>
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Full Name</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="e.g. Aravind Kumar"
+                              value={regName}
+                              onChange={(e) => setRegName(e.target.value)}
+                              className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:focus:ring-blue-500"
+                            />
+                          </div>
+
+                          {regRole === "student" && (
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Roll Number</label>
+                                <input
+                                  type="text"
+                                  placeholder="CS26012"
+                                  value={regRollNo}
+                                  onChange={(e) => setRegRollNo(e.target.value)}
+                                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[11px] font-semibold text-slate-500 mb-1">CGPA</label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="8.5"
+                                  value={regCgpa}
+                                  onChange={(e) => setRegCgpa(e.target.value)}
+                                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          {regRole === "student" && (
+                            <div>
+                              <label className="block text-[11px] font-semibold text-slate-500 mb-1">Branch</label>
+                              <select
+                                value={regBranch}
+                                onChange={(e) => setRegBranch(e.target.value)}
+                                className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                              >
+                                <option value="Computer Science (CSE)">Computer Science (CSE)</option>
+                                <option value="Information Technology (IT)">Information Technology (IT)</option>
+                                <option value="Electronics & Comm (ECE)">Electronics & Comm (ECE)</option>
+                                <option value="Electrical & Electronics (EEE)">Electrical & Electronics (EEE)</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                              </select>
+                            </div>
+                          )}
+
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Email Address</label>
+                            <input
+                              type="email"
+                              required
+                              placeholder="name@campus.edu"
+                              value={regEmail}
+                              onChange={(e) => setRegEmail(e.target.value)}
+                              className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Password</label>
+                            <input
+                              type="password"
+                              required
+                              placeholder="Create a strong password"
+                              value={regPassword}
+                              onChange={(e) => setRegPassword(e.target.value)}
+                              className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                            />
+                          </div>
+
+                          <button
+                            type="submit"
+                            className="w-full py-2.5 bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90 font-bold text-xs rounded-xl shadow-sm transition"
+                          >
+                            Complete Registration
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Quick Metrics Statistics Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center space-x-4">
-                <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-xl">
-                  <Award className="h-6 w-6" />
-                </div>
+            {/* Featured 5 Job Openings Preview */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Highest Package</p>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white">{highestPackage} LPA</h3>
-                  <span className="text-[10px] text-emerald-600 font-semibold">Google / Super Dream</span>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center space-x-4">
-                <div className="p-3.5 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-xl">
-                  <TrendingUp className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Average CTC</p>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white">{avgPackageCalculated} LPA</h3>
-                  <span className="text-[10px] text-blue-600 font-semibold">+18% vs Last Year</span>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center space-x-4">
-                <div className="p-3.5 bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 rounded-xl">
-                  <Users className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Offers Extended</p>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white">{totalOffers} Offers</h3>
-                  <span className="text-[10px] text-purple-600 font-semibold">Class of 2026</span>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center space-x-4">
-                <div className="p-3.5 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-xl">
-                  <Building2 className="h-6 w-6" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Visiting Partners</p>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white">{companies.length}+ Tier-1</h3>
-                  <span className="text-[10px] text-amber-600 font-semibold">MNCs & Unicorns</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Top Recruiters Logos Showcase */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800">
-              <div className="flex justify-between items-center mb-4">
-                <div>
-                  <h3 className="text-base font-bold flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-blue-600" />
-                    Key Recruiting Partners
-                  </h3>
-                  <p className="text-xs text-slate-500">Top organizations currently conducting on-campus recruitment</p>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Active Placement Drives</h3>
+                  <p className="text-xs text-slate-500">Curated opportunities currently open for campus applications</p>
                 </div>
                 <button
-                  onClick={() => setActiveTab("companies")}
-                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                  onClick={() => setActiveTab("jobs")}
+                  className="text-xs font-semibold text-slate-900 dark:text-blue-400 hover:underline flex items-center gap-1"
                 >
-                  View all companies <ArrowRight className="h-3.5 w-3.5" />
+                  View all openings <ArrowRight className="h-3.5 w-3.5" />
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-                {companies.map(c => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {jobs.slice(0, 3).map(job => (
                   <div
-                    key={c.id}
-                    onClick={() => { setSelectedCompanyTier("All"); setCompanySearch(c.name); setActiveTab("companies"); }}
-                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-800 hover:border-blue-500/50 hover:shadow-md transition cursor-pointer text-center group"
+                    key={job.id}
+                    className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
                   >
-                    <div className={`h-12 w-12 mx-auto rounded-xl bg-gradient-to-br ${c.color} text-white flex items-center justify-center font-black text-lg mb-2 shadow-sm group-hover:scale-105 transition-transform`}>
-                      {c.logoText}
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">{job.company}</span>
+                        <span className="text-xs font-bold text-emerald-600">{job.salary}</span>
+                      </div>
+                      <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{job.role}</h4>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{job.description}</p>
                     </div>
-                    <span className="font-bold text-xs block truncate">{c.name}</span>
-                    <span className="text-[10px] text-slate-500">{c.avgPackage}</span>
+                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+                      <span className="text-[11px] text-slate-400">Min CGPA: {job.minCgpa}</span>
+                      <button
+                        onClick={() => handleApplyJob(job)}
+                        className="px-3 py-1 bg-slate-900 text-white dark:bg-blue-600 rounded-lg text-xs font-semibold"
+                      >
+                        Apply
+                      </button>
+                    </div>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* How It Works - 4 Step Process */}
-            <div className="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-8 rounded-3xl space-y-6">
-              <div className="text-center max-w-xl mx-auto">
-                <h3 className="text-xl font-bold">4-Step Campus Placement Workflow</h3>
-                <p className="text-xs text-slate-300 mt-1">Simple and transparent process from application to receiving offer letter</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="h-8 w-8 rounded-full bg-blue-500 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">1</div>
-                  <h4 className="font-bold text-xs mb-1">Profile Registration</h4>
-                  <p className="text-[11px] text-slate-300">Complete student profile with CGPA, branch, resume & skill tags.</p>
-                </div>
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="h-8 w-8 rounded-full bg-blue-500 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">2</div>
-                  <h4 className="font-bold text-xs mb-1">Explore Openings</h4>
-                  <p className="text-[11px] text-slate-300">Browse verified job postings filtered by eligibility and domain.</p>
-                </div>
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="h-8 w-8 rounded-full bg-blue-500 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">3</div>
-                  <h4 className="font-bold text-xs mb-1">Online One-Click Apply</h4>
-                  <p className="text-[11px] text-slate-300">Submit applications directly before the company deadline.</p>
-                </div>
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="h-8 w-8 rounded-full bg-emerald-500 text-white font-bold text-xs flex items-center justify-center mx-auto mb-3">4</div>
-                  <h4 className="font-bold text-xs mb-1">Live Applier Tracker</h4>
-                  <p className="text-[11px] text-slate-300">Track shortlisting, online assessments, interviews, and offer letters.</p>
-                </div>
               </div>
             </div>
           </div>
@@ -1035,363 +1108,122 @@ export default function App() {
 
         {/* ==================== 2. ABOUT TAB ==================== */}
         {activeTab === "about" && (
-          <div className="space-y-8">
-            <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800">
-              <div className="max-w-3xl space-y-3">
-                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 text-xs font-bold rounded-full">
-                  About Our Center
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-black">University Training & Placement Cell</h2>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                  The Training & Placement Cell acts as the vital bridge between academia and corporate enterprises. Our mission is to equip students with industry-relevant competencies, algorithmic problem solving, professional communication, and placement assistance with Fortune 500 tech firms.
-                </p>
-              </div>
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Placement Directorate</span>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white">Training & Placement Cell</h2>
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                The Training and Placement Cell facilitates career counseling, algorithmic training, and placement drives with national and global technology leaders.
+              </p>
 
-              {/* Vision & Mission Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-                <div className="p-6 rounded-2xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 space-y-2">
-                  <div className="flex items-center space-x-2 text-blue-700 dark:text-blue-300 font-bold text-sm">
-                    <Sparkles className="h-4 w-4" />
-                    <h3>Our Vision</h3>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">
-                    To achieve 100% placement readiness by fostering technological excellence, industrial internships, core competence, and ethical leadership among all graduating students.
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+                  <h4 className="font-bold text-xs text-slate-900 dark:text-white mb-1">Placement Policy</h4>
+                  <p className="text-xs text-slate-500">
+                    One-Offer Policy ensures equal opportunity across the graduating cohort. Students receiving Dream category offers remain locked from regular tier recruitment.
                   </p>
                 </div>
-
-                <div className="p-6 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 space-y-2">
-                  <div className="flex items-center space-x-2 text-indigo-700 dark:text-indigo-300 font-bold text-sm">
-                    <ShieldCheck className="h-4 w-4" />
-                    <h3>Placement Policy & Guidelines</h3>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">
-                    One-Student-One-Dream policy: Once an offer above 15 LPA is accepted, the candidate remains locked for further regular drives, enabling equal opportunities for all peers.
+                <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+                  <h4 className="font-bold text-xs text-slate-900 dark:text-white mb-1">Corporate Relations</h4>
+                  <p className="text-xs text-slate-500">
+                    Over 50+ MoUs with multinational corporations for semester internships, technology workshops, and direct on-campus hiring.
                   </p>
                 </div>
               </div>
 
-              {/* Contact Coordinators */}
-              <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
-                <h3 className="text-base font-bold mb-4 flex items-center gap-2">
-                  <Users className="h-4 w-4 text-blue-600" />
-                  Placement Officers & Coordinators
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                  <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-                    <p className="font-bold text-sm">Prof. Ramachandran K</p>
-                    <p className="text-slate-500 text-[11px]">Director - Placement & Industry Relations</p>
-                    <p className="mt-2 text-blue-600 dark:text-blue-400 font-mono">placement.head@apexplacement.edu</p>
-                  </div>
-                  <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-                    <p className="font-bold text-sm">Dr. Preethi Sundaram</p>
-                    <p className="text-slate-500 text-[11px]">Lead Coordinator (Tech & Core Engineering)</p>
-                    <p className="mt-2 text-blue-600 dark:text-blue-400 font-mono">tech.placement@apexplacement.edu</p>
-                  </div>
-                  <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-                    <p className="font-bold text-sm">Placement Helpdesk</p>
-                    <p className="text-slate-500 text-[11px]">Office 204, Academic Block A</p>
-                    <p className="mt-2 text-blue-600 dark:text-blue-400 font-mono">+91 (044) 2899-4400</p>
-                  </div>
-                </div>
+              <div className="pt-6 border-t border-slate-100 dark:border-slate-800 text-xs">
+                <h4 className="font-bold text-xs text-slate-900 dark:text-white mb-2">Placement Office Contact</h4>
+                <p className="text-slate-500">Administrative Block, Academic Campus • Email: <span className="font-mono text-slate-700 dark:text-slate-300">placement@apexplacement.edu</span></p>
               </div>
             </div>
           </div>
         )}
 
-        {/* ==================== 3. JOBS TAB ==================== */}
+        {/* ==================== 3. JOBS TAB (5 CLEAN JOBS) ==================== */}
         {activeTab === "jobs" && (
           <div className="space-y-6">
-            {/* Top Filter and Search Bar */}
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-blue-600" />
-                    Campus Job Openings ({filteredJobs.length})
-                  </h2>
-                  <p className="text-xs text-slate-500">Explore and apply for verified drives from leading tech and core employers</p>
-                </div>
-
-                {currentUser?.role === "admin" && (
-                  <button
-                    onClick={() => setShowAddJobModal(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded-xl flex items-center gap-1.5 shadow-md shadow-blue-500/20 shrink-0 self-start md:self-auto"
-                  >
-                    <Plus className="h-4 w-4" /> Post New Job
-                  </button>
-                )}
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Active Campus Openings (5)</h2>
+                <p className="text-xs text-slate-500">Curated opportunities for Class of 2026</p>
               </div>
 
-              {/* Search & Filter Inputs */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                <div className="relative sm:col-span-1">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Search by role, company, location..."
-                    value={jobSearch}
-                    onChange={(e) => setJobSearch(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="All">All Domains / Categories</option>
-                    <option value="Software">Software</option>
-                    <option value="Data & AI">Data & AI</option>
-                    <option value="Core Engineering">Core Engineering</option>
-                    <option value="Design">Design</option>
-                    <option value="Analytics">Analytics</option>
-                  </select>
-                </div>
-
-                <div>
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="All">All Job Types</option>
-                    <option value="Full-Time">Full-Time</option>
-                    <option value="Internship">Internship</option>
-                    <option value="Contract">Contract</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Job Cards Grid */}
-            {filteredJobs.length === 0 ? (
-              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500">
-                <AlertCircle className="h-8 w-8 mx-auto mb-2 text-slate-400" />
-                <p className="font-semibold text-sm">No job openings found matching your criteria.</p>
-                <button
-                  onClick={() => { setJobSearch(""); setSelectedCategory("All"); setSelectedType("All"); }}
-                  className="mt-3 px-4 py-1.5 bg-blue-50 dark:bg-blue-950 text-blue-600 rounded-xl text-xs font-semibold"
-                >
-                  Reset Filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredJobs.map(job => {
-                  const isApplied = applications.some(a => a.jobId === job.id && a.studentEmail === currentUser?.email);
-                  return (
-                    <div
-                      key={job.id}
-                      className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-blue-500/50 hover:shadow-lg transition-all flex flex-col justify-between group"
-                    >
-                      <div>
-                        {/* Header Badge */}
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex items-center space-x-2">
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300">
-                              {job.type}
-                            </span>
-                            {job.badge && (
-                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                                job.badge === "Super Dream" ? "bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300" :
-                                job.badge === "Dream" ? "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300" :
-                                "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-                              }`}>
-                                {job.badge}
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-xl flex items-center">
-                            <DollarSign className="h-3 w-3 mr-0.5" />
-                            {job.salary}
-                          </span>
-                        </div>
-
-                        {/* Title & Company */}
-                        <h3 className="text-base font-bold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          {job.role}
-                        </h3>
-                        <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-0.5">
-                          {job.company} • <span className="text-slate-400 font-normal">{job.location}</span>
-                        </p>
-
-                        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                          {job.description}
-                        </p>
-
-                        {/* Requirements pills */}
-                        <div className="mt-3 flex flex-wrap gap-1.5">
-                          {job.requirements.slice(0, 2).map((req, idx) => (
-                            <span key={idx} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-md text-[10px]">
-                              {req}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Footer Actions */}
-                      <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
-                        <div className="text-[11px] text-slate-400 flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          <span>Deadline: {job.deadline}</span>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() => setSelectedJobDetails(job)}
-                            className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition"
-                          >
-                            Details
-                          </button>
-                          <button
-                            onClick={() => handleApplyJob(job)}
-                            disabled={isApplied}
-                            className={`px-4 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1 transition ${
-                              isApplied
-                                ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 cursor-not-allowed"
-                                : "bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-500/20"
-                            }`}
-                          >
-                            {isApplied ? (
-                              <>
-                                <CheckCircle className="h-3.5 w-3.5" /> Applied
-                              </>
-                            ) : (
-                              <>
-                                Apply <ArrowRight className="h-3.5 w-3.5" />
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ==================== 4. COMPANIES TAB ==================== */}
-        {activeTab === "companies" && (
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-blue-600" />
-                    Partner Recruiting Companies ({filteredCompanies.length})
-                  </h2>
-                  <p className="text-xs text-slate-500">Corporate hiring partners, eligibility criteria, visiting schedule & package statistics</p>
-                </div>
-
-                {/* Search */}
+              <div className="flex items-center space-x-3">
                 <div className="relative w-full sm:w-64">
                   <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="Search company or industry..."
-                    value={companySearch}
-                    onChange={(e) => setCompanySearch(e.target.value)}
-                    className="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    placeholder="Search role, company..."
+                    value={jobSearch}
+                    onChange={(e) => setJobSearch(e.target.value)}
+                    className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
                   />
                 </div>
-              </div>
-
-              {/* Tier Filters */}
-              <div className="flex flex-wrap gap-2 pt-1">
-                {["All", "Super Dream", "Dream", "Regular"].map(tier => (
+                {currentUser?.role === "admin" && (
                   <button
-                    key={tier}
-                    onClick={() => setSelectedCompanyTier(tier)}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold transition ${
-                      selectedCompanyTier === tier
-                        ? "bg-blue-600 text-white"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
-                    }`}
+                    onClick={() => setShowAddJobModal(true)}
+                    className="px-3 py-1.5 bg-slate-900 text-white dark:bg-blue-600 rounded-xl text-xs font-bold shrink-0"
                   >
-                    {tier === "All" ? "All Tiers" : tier}
+                    + Post Job
                   </button>
-                ))}
+                )}
               </div>
             </div>
 
-            {/* Companies Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredCompanies.map(comp => {
-                const companyJobs = jobs.filter(j => j.company.toLowerCase().includes(comp.name.toLowerCase()));
-                const companyPlaced = placedStudents.filter(p => p.company.toLowerCase().includes(comp.name.toLowerCase()));
+            {/* 5 Jobs Listing */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredJobs.map(job => {
+                const isApplied = applications.some(a => a.jobId === job.id && a.studentEmail === currentUser?.email);
                 return (
                   <div
-                    key={comp.id}
-                    className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-between hover:shadow-lg transition-all"
+                    key={job.id}
+                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
                   >
                     <div>
-                      {/* Top Header */}
-                      <div className="flex items-center space-x-3 mb-4">
-                        <div className={`h-12 w-12 rounded-2xl bg-gradient-to-br ${comp.color} text-white flex items-center justify-center font-black text-xl shadow-md`}>
-                          {comp.logoText}
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-base">{comp.name}</h3>
-                          <span className="text-[11px] text-slate-500">{comp.industry}</span>
-                        </div>
-                      </div>
-
-                      {/* Tier Badge */}
-                      <div className="mb-3">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300">
-                          {comp.tier}
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                          {job.badge}
                         </span>
+                        <span className="text-xs font-bold text-emerald-600">{job.salary}</span>
                       </div>
 
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
-                        {comp.description}
+                      <h3 className="font-bold text-base text-slate-900 dark:text-white">{job.role}</h3>
+                      <p className="text-xs font-semibold text-slate-500 mt-0.5">{job.company} • {job.location}</p>
+
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-3 line-clamp-2 leading-relaxed">
+                        {job.description}
                       </p>
 
-                      {/* Specifications */}
-                      <div className="space-y-2 text-xs py-3 border-y border-slate-100 dark:border-slate-800/80">
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Average CTC:</span>
-                          <span className="font-bold text-emerald-600 dark:text-emerald-400">{comp.avgPackage}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Campus Drive Date:</span>
-                          <span className="font-semibold">{comp.visitingDate}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Eligible Branches:</span>
-                          <span className="font-semibold truncate max-w-[150px]">{comp.eligibleBranches.join(", ")}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Class of '26 Selected:</span>
-                          <span className="font-bold text-blue-600">{companyPlaced.length} Students</span>
-                        </div>
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {job.requirements.map((r, i) => (
+                          <span key={i} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800/60 rounded text-[10px] text-slate-600 dark:text-slate-400">
+                            {r}
+                          </span>
+                        ))}
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-2 flex items-center justify-between">
-                      <button
-                        onClick={() => {
-                          setSelectedPlacedCompany(comp.name);
-                          setActiveTab("placed");
-                        }}
-                        className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline"
-                      >
-                        View Selected ({companyPlaced.length})
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setJobSearch(comp.name);
-                          setActiveTab("jobs");
-                        }}
-                        className="px-3 py-1.5 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 rounded-xl text-xs font-bold hover:bg-blue-100 transition"
-                      >
-                        Open Jobs ({companyJobs.length})
-                      </button>
+                    <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                      <span className="text-[11px] text-slate-400">Deadline: {job.deadline}</span>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setSelectedJobDetails(job)}
+                          className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800"
+                        >
+                          Details
+                        </button>
+                        <button
+                          onClick={() => handleApplyJob(job)}
+                          disabled={isApplied}
+                          className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
+                            isApplied
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 cursor-not-allowed"
+                              : "bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90"
+                          }`}
+                        >
+                          {isApplied ? "Applied" : "Apply Now"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -1400,237 +1232,195 @@ export default function App() {
           </div>
         )}
 
-        {/* ==================== 5. ROLES & DOMAINS TAB ==================== */}
-        {activeTab === "roles" && (
+        {/* ==================== 4. COMPANIES TAB ==================== */}
+        {activeTab === "companies" && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800">
-              <div className="max-w-2xl">
-                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 text-xs font-bold rounded-full">
-                  Career Tracks & Roadmaps
-                </span>
-                <h2 className="text-2xl font-black mt-2">Specialized Hiring Roles & Skill Expectations</h2>
-                <p className="text-xs text-slate-500 mt-1">Detailed breakdown of career domains, skill requirements, compensation packages, and active vacancies.</p>
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recruiting Corporate Partners ({filteredCompanies.length})</h2>
+                <p className="text-xs text-slate-500">Hiring schedule and recruitment criteria</p>
               </div>
 
-              {/* Roles Breakdown Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                {roles.map(role => (
-                  <div
-                    key={role.id}
-                    className="p-6 rounded-3xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 hover:border-blue-500/50 transition-all flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-sm">
-                            <Compass className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-base">{role.title}</h3>
-                            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">Typical CTC: {role.averageSalary}</span>
-                          </div>
-                        </div>
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search company..."
+                  value={companySearch}
+                  onChange={(e) => setCompanySearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredCompanies.map(comp => (
+                <div
+                  key={comp.id}
+                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold flex items-center justify-center text-base">
+                        {comp.logoText}
                       </div>
-
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mt-2 mb-4">
-                        {role.description}
-                      </p>
-
-                      <div className="space-y-2">
-                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Key Skill Matrix</span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {role.skills.map((skill, idx) => (
-                            <span key={idx} className="px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium">
-                              ✓ {skill}
-                            </span>
-                          ))}
-                        </div>
+                      <div>
+                        <h3 className="font-bold text-sm text-slate-900 dark:text-white">{comp.name}</h3>
+                        <span className="text-[11px] text-slate-400">{comp.industry}</span>
                       </div>
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-500">{role.openingsCount} Active Openings</span>
-                      <button
-                        onClick={() => {
-                          setSelectedCategory(role.title.includes("Software") ? "Software" : role.title.includes("AI") ? "Data & AI" : "All");
-                          setActiveTab("jobs");
-                        }}
-                        className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm"
-                      >
-                        Browse {role.title.split(" ")[0]} Jobs <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                      {comp.description}
+                    </p>
+
+                    <div className="space-y-1.5 text-xs py-2 border-y border-slate-100 dark:border-slate-800">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Average CTC:</span>
+                        <span className="font-bold text-slate-900 dark:text-white">{comp.avgPackage}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Visiting Date:</span>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">{comp.visitingDate}</span>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  <div className="mt-4 pt-2 flex justify-between items-center text-xs">
+                    <button
+                      onClick={() => {
+                        setSelectedPlacedCompany(comp.name);
+                        setActiveTab("placed");
+                      }}
+                      className="text-slate-900 dark:text-blue-400 font-semibold hover:underline"
+                    >
+                      Placed Students
+                    </button>
+                    <button
+                      onClick={() => {
+                        setJobSearch(comp.name);
+                        setActiveTab("jobs");
+                      }}
+                      className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg font-semibold"
+                    >
+                      View Openings
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* ==================== 6. APPLIER TRACK (APPLICATION TRACKER) ==================== */}
-        {activeTab === "tracker" && (
+        {/* ==================== 5. ROLES TAB ==================== */}
+        {activeTab === "roles" && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-blue-600" />
-                    Applier Live Status Tracker ({filteredTrackerApps.length})
-                  </h2>
-                  <p className="text-xs text-slate-500">Real-time stage timeline from resume screening to final offer dispatch</p>
-                </div>
-
-                {/* Filter Tabs */}
-                <div className="flex flex-wrap gap-1.5">
-                  {["All", "In-Progress", "Selected", "Rejected"].map(filter => (
-                    <button
-                      key={filter}
-                      onClick={() => setTrackerFilter(filter)}
-                      className={`px-3 py-1 rounded-xl text-xs font-semibold transition ${
-                        trackerFilter === filter
-                          ? "bg-blue-600 text-white"
-                          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
-                      }`}
-                    >
-                      {filter}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Career Tracks & Competency Matrices</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Core hiring domains and skill requirements</p>
             </div>
 
-            {/* Applications List */}
-            {filteredTrackerApps.length === 0 ? (
-              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-slate-500">
-                <FileText className="h-10 w-10 mx-auto mb-3 text-slate-400" />
-                <p className="font-bold text-sm">No applications found in this category.</p>
-                <p className="text-xs text-slate-400 mt-1">Browse available campus jobs and click "Apply" to start tracking.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {roles.map(role => (
+                <div
+                  key={role.id}
+                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4"
+                >
+                  <div className="flex justify-between items-start">
+                    <h3 className="font-bold text-base text-slate-900 dark:text-white">{role.title}</h3>
+                    <span className="text-xs font-bold text-emerald-600">{role.averageSalary}</span>
+                  </div>
+
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {role.description}
+                  </p>
+
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Recommended Skills</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {role.skills.map((s, idx) => (
+                        <span key={idx} className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-medium text-slate-700 dark:text-slate-300">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ==================== 6. APPLIER TRACK ==================== */}
+        {activeTab === "tracker" && (
+          <div className="space-y-6">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Application Status Tracker</h2>
+              <p className="text-xs text-slate-500">Live recruitment progress stages</p>
+            </div>
+
+            {myApplications.length === 0 ? (
+              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-500 space-y-3">
+                <FileText className="h-8 w-8 mx-auto text-slate-400" />
+                <p className="font-bold text-sm">No applications submitted yet.</p>
                 <button
                   onClick={() => setActiveTab("jobs")}
-                  className="mt-4 px-5 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl shadow-md"
+                  className="px-4 py-2 bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold rounded-xl"
                 >
-                  Explore Jobs Now
+                  Explore Jobs (5)
                 </button>
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredTrackerApps.map(app => (
+                {myApplications.map(app => (
                   <div
                     key={app.id}
-                    className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-5"
+                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4"
                   >
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
                       <div>
-                        <div className="flex items-center space-x-2">
-                          <h3 className="font-bold text-base">{app.role}</h3>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
-                            {app.company}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          Candidate: <span className="font-semibold text-slate-700 dark:text-slate-200">{app.studentName} ({app.rollNo})</span> • Applied on {app.appliedDate}
-                        </p>
+                        <h3 className="font-bold text-sm text-slate-900 dark:text-white">{app.role} • <span className="text-slate-500">{app.company}</span></h3>
+                        <span className="text-[11px] text-slate-400">Candidate: {app.studentName} ({app.rollNo}) • Applied: {app.appliedDate}</span>
                       </div>
-
-                      <div className="flex items-center space-x-3">
-                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-xl">
-                          {app.salary}
-                        </span>
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                          app.stage === "Selected" ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300" :
-                          app.stage === "Rejected" ? "bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300" :
-                          "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300"
-                        }`}>
-                          {app.stage}
-                        </span>
-                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold self-start sm:self-auto ${
+                        app.stage === "Selected" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" :
+                        app.stage === "Rejected" ? "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300" :
+                        "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200"
+                      }`}>
+                        {app.stage}
+                      </span>
                     </div>
 
-                    {/* Multi-stage Progress Stepper */}
-                    <div>
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Recruitment Pipeline Stages</p>
-                      <div className="grid grid-cols-5 gap-2 text-center text-[10px] sm:text-xs">
-                        {[
-                          { step: 1, label: "Applied" },
-                          { step: 2, label: "Assessment" },
-                          { step: 3, label: "Technical" },
-                          { step: 4, label: "HR Round" },
-                          { step: 5, label: "Offer / Result" },
-                        ].map(st => {
-                          const isPassed = app.stageStep > st.step || (app.stageStep === 5 && app.stage === "Selected");
-                          const isCurrent = app.stageStep === st.step && app.stage !== "Rejected";
-                          const isFailed = app.stage === "Rejected" && app.stageStep === st.step;
-
-                          return (
-                            <div key={st.step} className="flex flex-col items-center">
-                              <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold mb-1.5 transition-all ${
-                                isPassed ? "bg-emerald-600 text-white shadow-sm" :
-                                isCurrent ? "bg-blue-600 text-white ring-4 ring-blue-100 dark:ring-blue-900/50" :
-                                isFailed ? "bg-rose-600 text-white" :
-                                "bg-slate-100 dark:bg-slate-800 text-slate-400"
-                              }`}>
-                                {isPassed ? "✓" : st.step}
-                              </div>
-                              <span className={`font-semibold ${
-                                isCurrent ? "text-blue-600 dark:text-blue-400" :
-                                isPassed ? "text-emerald-600 dark:text-emerald-400" :
-                                "text-slate-400"
-                              }`}>
-                                {st.label}
-                              </span>
+                    {/* Step Timeline */}
+                    <div className="grid grid-cols-5 gap-2 text-center text-[10px] sm:text-xs">
+                      {[
+                        { step: 1, label: "Applied" },
+                        { step: 2, label: "Assessment" },
+                        { step: 3, label: "Technical" },
+                        { step: 4, label: "HR Round" },
+                        { step: 5, label: "Offer" },
+                      ].map(st => {
+                        const isDone = app.stageStep > st.step || (app.stageStep === 5 && app.stage === "Selected");
+                        const isCurrent = app.stageStep === st.step && app.stage !== "Rejected";
+                        return (
+                          <div key={st.step} className="flex flex-col items-center">
+                            <div className={`h-7 w-7 rounded-full flex items-center justify-center font-bold mb-1 ${
+                              isDone ? "bg-emerald-600 text-white" :
+                              isCurrent ? "bg-slate-900 text-white dark:bg-blue-600" :
+                              "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                            }`}>
+                              {isDone ? "✓" : st.step}
                             </div>
-                          );
-                        })}
-                      </div>
+                            <span className="text-[10px] text-slate-500">{st.label}</span>
+                          </div>
+                        );
+                      })}
                     </div>
 
-                    {/* Feedback and Schedule Alert */}
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row justify-between gap-3 text-xs">
-                      <div>
-                        <span className="font-bold text-slate-700 dark:text-slate-200 block mb-0.5">Recruiter Update & Feedback:</span>
-                        <p className="text-slate-500">{app.feedback || "Under progressive evaluation by recruitment committee."}</p>
-                      </div>
-                      {app.nextSchedule && (
-                        <div className="sm:text-right shrink-0">
-                          <span className="font-bold text-blue-600 dark:text-blue-400 block mb-0.5">Next Scheduled Activity:</span>
-                          <span className="text-slate-600 dark:text-slate-300 font-medium">{app.nextSchedule}</span>
-                        </div>
-                      )}
+                    <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl text-xs text-slate-600 dark:text-slate-300">
+                      <span className="font-bold text-slate-800 dark:text-slate-200 block mb-0.5">Status Update:</span>
+                      <p className="text-slate-500">{app.feedback || "Application submitted and queued for evaluation."}</p>
                     </div>
-
-                    {/* Admin Stage Controls */}
-                    {currentUser?.role === "admin" && (
-                      <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
-                        <span className="text-[11px] font-bold text-amber-600">Admin Pipeline Controls:</span>
-                        <div className="flex flex-wrap gap-1.5">
-                          <button
-                            onClick={() => handleUpdateApplicantStage(app.id, "Online Assessment", 2, "Assessment link scheduled for candidate.")}
-                            className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-700 text-[10px] font-bold"
-                          >
-                            Set Assessment (Step 2)
-                          </button>
-                          <button
-                            onClick={() => handleUpdateApplicantStage(app.id, "Technical Interview", 3, "Technical interview invite sent.")}
-                            className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-700 text-[10px] font-bold"
-                          >
-                            Set Tech Round (Step 3)
-                          </button>
-                          <button
-                            onClick={() => handleUpdateApplicantStage(app.id, "Selected", 5, "🎉 Selected! Full time placement offer issued.")}
-                            className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[10px] font-bold shadow-sm"
-                          >
-                            Mark Selected (Offer)
-                          </button>
-                          <button
-                            onClick={() => handleUpdateApplicantStage(app.id, "Rejected", app.stageStep, "Not shortlisted in this recruitment drive.")}
-                            className="px-2.5 py-1 rounded-lg bg-rose-100 dark:bg-rose-950 text-rose-700 text-[10px] font-bold"
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
@@ -1638,43 +1428,39 @@ export default function App() {
           </div>
         )}
 
-        {/* ==================== 7. PLACED STUDENTS TAB (GROUPED BY COMPANY) ==================== */}
+        {/* ==================== 7. PLACED STUDENTS (COMPANY-WISE) ==================== */}
         {activeTab === "placed" && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-blue-600" />
-                    Placed Students Hall of Fame ({filteredPlaced.length})
-                  </h2>
-                  <p className="text-xs text-slate-500">Company-wise selections, student roll numbers, branches, and compensation details</p>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">Placed Students Directory ({filteredPlaced.length})</h2>
+                  <p className="text-xs text-slate-500">Company-wise selections and packages</p>
                 </div>
 
-                {/* Search */}
                 <div className="relative w-full sm:w-64">
                   <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="Search student, roll no, branch..."
+                    placeholder="Search candidate, roll no..."
                     value={placedSearch}
                     onChange={(e) => setPlacedSearch(e.target.value)}
-                    className="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
                   />
                 </div>
               </div>
 
               {/* Company Selection Tabs */}
-              <div className="flex flex-wrap gap-2 pt-1 overflow-x-auto no-scrollbar">
+              <div className="flex flex-wrap gap-1.5 pt-1">
                 <button
                   onClick={() => setSelectedPlacedCompany("All")}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition shrink-0 ${
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold ${
                     selectedPlacedCompany === "All"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-slate-900 text-white dark:bg-blue-600"
                       : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
                   }`}
                 >
-                  All Companies ({placedStudents.length})
+                  All ({placedStudents.length})
                 </button>
                 {uniquePlacedCompanies.map(cName => {
                   const count = placedStudents.filter(p => p.company === cName).length;
@@ -1682,9 +1468,9 @@ export default function App() {
                     <button
                       key={cName}
                       onClick={() => setSelectedPlacedCompany(cName)}
-                      className={`px-3 py-1 rounded-full text-xs font-semibold transition shrink-0 ${
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold ${
                         selectedPlacedCompany === cName
-                          ? "bg-blue-600 text-white"
+                          ? "bg-slate-900 text-white dark:bg-blue-600"
                           : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
                       }`}
                     >
@@ -1695,47 +1481,30 @@ export default function App() {
               </div>
             </div>
 
-            {/* Placed Students Cards Grid */}
+            {/* Placed Students Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredPlaced.map(student => (
                 <div
                   key={student.id}
-                  className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 hover:shadow-md transition-all flex flex-col justify-between"
+                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3"
                 >
-                  <div>
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-sm">
-                        {student.name.charAt(0)}
-                      </div>
-                      <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-xl">
-                        {student.packageLpa} LPA
-                      </span>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">{student.name}</h4>
+                      <p className="text-[11px] text-slate-400 font-mono">{student.rollNo} • {student.branch}</p>
                     </div>
-
-                    <h3 className="font-bold text-sm text-slate-900 dark:text-white">{student.name}</h3>
-                    <p className="text-[11px] font-mono text-slate-500">{student.rollNo} • {student.branch}</p>
-                    
-                    <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400">Company:</span>
-                        <span className="font-bold text-blue-600 dark:text-blue-400">{student.company}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400">Designation:</span>
-                        <span className="font-medium text-slate-700 dark:text-slate-300 truncate max-w-[140px]">{student.role}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400">CGPA:</span>
-                        <span className="font-semibold">{student.cgpa} / 10.0</span>
-                      </div>
-                    </div>
+                    <span className="text-xs font-bold text-emerald-600">{student.packageLpa} LPA</span>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
-                    <span className="flex items-center gap-1 text-emerald-600 font-semibold">
-                      <CheckCircle2 className="h-3.5 w-3.5" /> Verified Placement
-                    </span>
-                    <span>Batch of {student.year}</span>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl text-xs space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Placed at:</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{student.company}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Role:</span>
+                      <span className="text-slate-600 dark:text-slate-300 truncate max-w-[130px]">{student.role}</span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1744,84 +1513,51 @@ export default function App() {
         )}
 
         {/* ==================== 8. ADMIN PANEL TAB ==================== */}
-        {activeTab === "admin" && (
-          <div className="space-y-8">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {activeTab === "admin" && currentUser?.role === "admin" && (
+          <div className="space-y-6">
+            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-amber-600" />
-                  Placement Cell Administrative Console
-                </h2>
-                <p className="text-xs text-slate-500">Coordinate placement drives, add job postings, verify candidate selections</p>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Admin Placement Console</h2>
+                <p className="text-xs text-slate-500">Manage placement drives and candidate records</p>
               </div>
-
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => setShowAddJobModal(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded-xl flex items-center gap-1.5 shadow-md"
-                >
-                  <Plus className="h-4 w-4" /> Post New Job
-                </button>
-              </div>
+              <button
+                onClick={() => setShowAddJobModal(true)}
+                className="px-3 py-1.5 bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold rounded-xl"
+              >
+                + Post New Job
+              </button>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <p className="text-xs text-slate-400 font-semibold">Active Job Posts</p>
-                <h3 className="text-2xl font-black mt-1">{jobs.length} Positions</h3>
-              </div>
-              <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <p className="text-xs text-slate-400 font-semibold">Total Application Submissions</p>
-                <h3 className="text-2xl font-black mt-1 text-blue-600">{applications.length} Submissions</h3>
-              </div>
-              <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <p className="text-xs text-slate-400 font-semibold">Confirmed Placed Students</p>
-                <h3 className="text-2xl font-black mt-1 text-emerald-600">{placedStudents.length} Students</h3>
-              </div>
-            </div>
-
-            {/* Manage Existing Job Openings Table */}
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-              <div className="p-5 border-b border-slate-200 dark:border-slate-800">
-                <h3 className="font-bold text-sm">Active Campus Drives Management</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-semibold">
-                    <tr>
-                      <th className="px-5 py-3">Role</th>
-                      <th className="px-5 py-3">Company</th>
-                      <th className="px-5 py-3">Package</th>
-                      <th className="px-5 py-3">Applicants</th>
-                      <th className="px-5 py-3">Deadline</th>
-                      <th className="px-5 py-3 text-right">Actions</th>
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-semibold">
+                  <tr>
+                    <th className="px-5 py-3">Role</th>
+                    <th className="px-5 py-3">Company</th>
+                    <th className="px-5 py-3">Package</th>
+                    <th className="px-5 py-3">Applicants</th>
+                    <th className="px-5 py-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {jobs.map(j => (
+                    <tr key={j.id}>
+                      <td className="px-5 py-3.5 font-bold">{j.role}</td>
+                      <td className="px-5 py-3.5">{j.company}</td>
+                      <td className="px-5 py-3.5 text-emerald-600 font-semibold">{j.salary}</td>
+                      <td className="px-5 py-3.5">{j.applicants}</td>
+                      <td className="px-5 py-3.5 text-right">
+                        <button
+                          onClick={() => setJobs(jobs.filter(x => x.id !== j.id))}
+                          className="text-rose-600 font-bold hover:underline"
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                    {jobs.map(j => (
-                      <tr key={j.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20">
-                        <td className="px-5 py-3.5 font-bold">{j.role}</td>
-                        <td className="px-5 py-3.5">{j.company}</td>
-                        <td className="px-5 py-3.5 font-semibold text-emerald-600">{j.salary}</td>
-                        <td className="px-5 py-3.5">{j.applicants} Candidates</td>
-                        <td className="px-5 py-3.5 text-slate-400">{j.deadline}</td>
-                        <td className="px-5 py-3.5 text-right">
-                          <button
-                            onClick={() => {
-                              setJobs(jobs.filter(item => item.id !== j.id));
-                              alert("Job posting removed.");
-                            }}
-                            className="text-rose-600 font-bold hover:underline"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
@@ -1829,77 +1565,35 @@ export default function App() {
 
       {/* ================= MODAL: JOB DETAILS ================= */}
       {selectedJobDetails && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative space-y-6">
-            
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-xl space-y-4">
             <div className="flex justify-between items-start">
               <div>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300">
-                  {selectedJobDetails.type} • {selectedJobDetails.category}
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                  {selectedJobDetails.badge}
                 </span>
-                <h2 className="text-xl font-black mt-2">{selectedJobDetails.role}</h2>
-                <p className="text-sm font-bold text-slate-600 dark:text-slate-300">{selectedJobDetails.company} • {selectedJobDetails.location}</p>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1">{selectedJobDetails.role}</h3>
+                <p className="text-xs font-semibold text-slate-500">{selectedJobDetails.company} • {selectedJobDetails.location}</p>
               </div>
-
-              <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-xl">
-                {selectedJobDetails.salary}
-              </span>
+              <span className="text-xs font-bold text-emerald-600">{selectedJobDetails.salary}</span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
-                <span className="text-slate-400 block text-[10px]">Min CGPA</span>
-                <span className="font-bold">{selectedJobDetails.minCgpa} / 10</span>
-              </div>
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
-                <span className="text-slate-400 block text-[10px]">Eligible Branches</span>
-                <span className="font-bold truncate block">{selectedJobDetails.department}</span>
-              </div>
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
-                <span className="text-slate-400 block text-[10px]">Deadline</span>
-                <span className="font-bold">{selectedJobDetails.deadline}</span>
-              </div>
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
-                <span className="text-slate-400 block text-[10px]">Applicants</span>
-                <span className="font-bold">{selectedJobDetails.applicants}</span>
-              </div>
-            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              {selectedJobDetails.description}
+            </p>
 
-            <div className="space-y-2">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">Role Overview</h4>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                {selectedJobDetails.description}
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">Key Qualifications & Skills</h4>
-              <ul className="text-xs space-y-1 text-slate-600 dark:text-slate-300">
-                {selectedJobDetails.requirements.map((req, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-blue-600"></span>
-                    {req}
-                  </li>
-                ))}
+            <div className="space-y-1 text-xs">
+              <span className="font-bold text-slate-700 dark:text-slate-300 block">Requirements:</span>
+              <ul className="list-disc pl-4 text-slate-500 space-y-0.5">
+                {selectedJobDetails.requirements.map((r, i) => <li key={i}>{r}</li>)}
               </ul>
             </div>
 
-            <div className="space-y-2">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">Selection Process</h4>
-              <div className="flex flex-wrap gap-2 text-xs">
-                {selectedJobDetails.rounds.map((round, i) => (
-                  <span key={i} className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg font-medium">
-                    Round {i+1}: {round}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
               <button
                 type="button"
                 onClick={() => setSelectedJobDetails(null)}
-                className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="flex-1 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold"
               >
                 Close
               </button>
@@ -1909,340 +1603,95 @@ export default function App() {
                   handleApplyJob(selectedJobDetails);
                   setSelectedJobDetails(null);
                 }}
-                className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md"
+                className="flex-1 py-2 bg-slate-900 text-white dark:bg-blue-600 rounded-xl text-xs font-bold"
               >
-                Apply for this Position
+                Apply for Position
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ================= MODAL: AUTH (LOGIN & REGISTER) ================= */}
-      {authModal !== "none" && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl relative space-y-5">
-            
-            {/* Modal Header */}
-            <div className="text-center space-y-1">
-              <div className="h-12 w-12 rounded-2xl bg-blue-600 text-white mx-auto flex items-center justify-center font-black text-xl shadow-md mb-2">
-                <Lock className="h-5 w-5" />
-              </div>
-              <h3 className="text-xl font-bold">
-                {authModal === "login" ? "Sign in to ApexPlacement" : "Create New Account"}
-              </h3>
-              <p className="text-xs text-slate-500">
-                {authModal === "login" ? "Enter your credentials or use 1-click demo login" : "Register with your student details"}
-              </p>
-            </div>
-
-            {/* Role Switcher (Student vs Admin) */}
-            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
-              <button
-                type="button"
-                onClick={() => setAuthTab("student")}
-                className={`py-1.5 text-xs font-bold rounded-lg transition ${
-                  authTab === "student" ? "bg-white dark:bg-slate-900 text-blue-600 shadow-sm" : "text-slate-500"
-                }`}
-              >
-                Student
-              </button>
-              <button
-                type="button"
-                onClick={() => setAuthTab("admin")}
-                className={`py-1.5 text-xs font-bold rounded-lg transition ${
-                  authTab === "admin" ? "bg-white dark:bg-slate-900 text-amber-600 shadow-sm" : "text-slate-500"
-                }`}
-              >
-                Placement Officer (Admin)
-              </button>
-            </div>
-
-            {/* 1-Click Instant Demo Login Button */}
-            <div className="p-3 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/40 text-center">
-              <span className="text-[11px] text-blue-700 dark:text-blue-300 font-semibold block mb-2">
-                ⚡ Quick 1-Click Demo Login
-              </span>
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin(authTab)}
-                className="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-sm"
-              >
-                Sign In Instantly as {authTab === "student" ? "Demo Student (CS26099)" : "Placement Director"}
-              </button>
-            </div>
-
-            {/* Forms */}
-            {authModal === "login" ? (
-              <form onSubmit={handleLogin} className="space-y-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Email / Roll Number</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder={authTab === "student" ? "student@apexplacement.edu" : "placement.head@apexplacement.edu"}
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Password</label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div className="pt-2 flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setAuthModal("none")}
-                    className="flex-1 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                  >
-                    Sign In
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <form onSubmit={handleRegister} className="space-y-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Aravind Kumar"
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1">Roll Number</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. CS26012"
-                      value={regRollNo}
-                      onChange={(e) => setRegRollNo(e.target.value)}
-                      className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1">CGPA</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      placeholder="8.5"
-                      value={regCgpa}
-                      onChange={(e) => setRegCgpa(e.target.value)}
-                      className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Department / Branch</label>
-                  <select
-                    value={regBranch}
-                    onChange={(e) => setRegBranch(e.target.value)}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="Computer Science (CSE)">Computer Science (CSE)</option>
-                    <option value="Information Technology (IT)">Information Technology (IT)</option>
-                    <option value="Electronics & Comm (ECE)">Electronics & Comm (ECE)</option>
-                    <option value="Electrical & Electronics (EEE)">Electrical & Electronics (EEE)</option>
-                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Email</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="your.email@apexplacement.edu"
-                    value={regEmail}
-                    onChange={(e) => setRegEmail(e.target.value)}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Password</label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={regPassword}
-                    onChange={(e) => setRegPassword(e.target.value)}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div className="pt-2 flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setAuthModal("none")}
-                    className="flex-1 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                  >
-                    Register Account
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* Switch between Login and Register */}
-            <div className="text-center pt-2 text-xs text-slate-500">
-              {authModal === "login" ? (
-                <p>
-                  Don't have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setAuthModal("register")}
-                    className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
-                  >
-                    Register here
-                  </button>
-                </p>
-              ) : (
-                <p>
-                  Already registered?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setAuthModal("login")}
-                    className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
-                  >
-                    Sign in
-                  </button>
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ================= MODAL: ADD JOB BY ADMIN ================= */}
+      {/* ================= MODAL: ADD JOB ================= */}
       {showAddJobModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl relative space-y-4">
-            <h3 className="text-lg font-bold">Post a New Campus Placement Drive</h3>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-xl space-y-4">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Post New Campus Drive</h3>
             <form onSubmit={handleAddJobSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Company Name</label>
+                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Company</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Microsoft"
                   value={newJob.company}
                   onChange={(e) => setNewJob({ ...newJob, company: e.target.value })}
-                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Job Role Title</label>
+                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Role Title</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Software Engineer"
                   value={newJob.role}
                   onChange={(e) => setNewJob({ ...newJob, role: e.target.value })}
-                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Location</label>
+                  <label className="block text-[11px] font-semibold text-slate-500 mb-1">Salary / CTC</label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Bangalore"
-                    value={newJob.location}
-                    onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Salary / CTC</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. 18 - 22 LPA"
+                    placeholder="e.g. 18 LPA"
                     value={newJob.salary}
                     onChange={(e) => setNewJob({ ...newJob, salary: e.target.value })}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Category</label>
-                  <select
-                    value={newJob.category}
-                    onChange={(e) => setNewJob({ ...newJob, category: e.target.value as "Software" | "Data & AI" | "Core Engineering" | "Design" | "Analytics" })}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
-                  >
-                    <option value="Software">Software</option>
-                    <option value="Data & AI">Data & AI</option>
-                    <option value="Core Engineering">Core Engineering</option>
-                    <option value="Design">Design</option>
-                    <option value="Analytics">Analytics</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Drive Tier</label>
+                  <label className="block text-[11px] font-semibold text-slate-500 mb-1">Tier</label>
                   <select
                     value={newJob.badge}
                     onChange={(e) => setNewJob({ ...newJob, badge: e.target.value as "Super Dream" | "Dream" | "Regular" })}
                     className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
                   >
-                    <option value="Super Dream">Super Dream (20+ LPA)</option>
-                    <option value="Dream">Dream (10 - 20 LPA)</option>
-                    <option value="Regular">Regular (&lt;10 LPA)</option>
+                    <option value="Super Dream">Super Dream</option>
+                    <option value="Dream">Dream</option>
+                    <option value="Regular">Regular</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Role Description</label>
+                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Description</label>
                 <textarea
                   rows={3}
-                  placeholder="Enter key responsibilities and requirements..."
+                  placeholder="Role overview..."
                   value={newJob.description}
                   onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
-                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 resize-none"
                 />
               </div>
 
-              <div className="pt-2 flex gap-3">
+              <div className="pt-2 flex gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddJobModal(false)}
-                  className="flex-1 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800"
+                  className="flex-1 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+                  className="flex-1 py-2 bg-slate-900 text-white dark:bg-blue-600 rounded-xl text-xs font-bold"
                 >
-                  Publish Job Drive
+                  Publish Drive
                 </button>
               </div>
             </form>
@@ -2251,14 +1700,8 @@ export default function App() {
       )}
 
       {/* ================= FOOTER ================= */}
-      <footer className="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 text-center text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 space-y-2">
-          <div className="flex items-center justify-center space-x-2 font-bold text-slate-700 dark:text-slate-300">
-            <Award className="h-4 w-4 text-blue-600" />
-            <span>ApexPlacement Portal • Campus Recruitment & Training Directorate</span>
-          </div>
-          <p>© 2026 ApexPlacement. All rights reserved. Connecting students with industry-leading careers.</p>
-        </div>
+      <footer className="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-400">
+        <p>© 2026 ApexPlacement Portal • Campus Training & Recruitment Directorate</p>
       </footer>
     </div>
   );
