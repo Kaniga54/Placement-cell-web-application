@@ -1076,25 +1076,25 @@ export default function App() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {jobs.slice(0, 3).map(job => (
                   <div
                     key={job.id}
-                    className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
+                    className="p-5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 shadow-md flex flex-col justify-between transition-all"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-xs font-bold text-slate-900 dark:text-white">{job.company}</span>
-                        <span className="text-xs font-bold text-emerald-600">{job.salary}</span>
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">{job.salary}</span>
                       </div>
                       <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{job.role}</h4>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{job.description}</p>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+                    <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
                       <span className="text-[11px] text-slate-400">Min CGPA: {job.minCgpa}</span>
                       <button
                         onClick={() => handleApplyJob(job)}
-                        className="px-3 py-1 bg-slate-900 text-white dark:bg-blue-600 rounded-lg text-xs font-semibold"
+                        className="px-3.5 py-1.5 bg-slate-900 text-white dark:bg-blue-600 rounded-lg text-xs font-semibold shadow-sm"
                       >
                         Apply
                       </button>
@@ -1171,23 +1171,23 @@ export default function App() {
             </div>
 
             {/* 5 Jobs Listing */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {filteredJobs.map(job => {
                 const isApplied = applications.some(a => a.jobId === job.id && a.studentEmail === currentUser?.email);
                 return (
                   <div
                     key={job.id}
-                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
+                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 dark:hover:border-slate-500 shadow-md hover:shadow-lg transition-all flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-2">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                           {job.badge}
                         </span>
-                        <span className="text-xs font-bold text-emerald-600">{job.salary}</span>
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800/60">{job.salary}</span>
                       </div>
 
-                      <h3 className="font-bold text-base text-slate-900 dark:text-white">{job.role}</h3>
+                      <h3 className="font-bold text-base text-slate-900 dark:text-white mt-1">{job.role}</h3>
                       <p className="text-xs font-semibold text-slate-500 mt-0.5">{job.company} • {job.location}</p>
 
                       <p className="text-xs text-slate-600 dark:text-slate-400 mt-3 line-clamp-2 leading-relaxed">
@@ -1196,19 +1196,19 @@ export default function App() {
 
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         {job.requirements.map((r, i) => (
-                          <span key={i} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800/60 rounded text-[10px] text-slate-600 dark:text-slate-400">
+                          <span key={i} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-[10px] text-slate-600 dark:text-slate-400">
                             {r}
                           </span>
                         ))}
                       </div>
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
                       <span className="text-[11px] text-slate-400">Deadline: {job.deadline}</span>
                       <div className="flex space-x-2">
                         <button
                           onClick={() => setSelectedJobDetails(job)}
-                          className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800"
+                          className="px-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                         >
                           Details
                         </button>
@@ -1217,8 +1217,8 @@ export default function App() {
                           disabled={isApplied}
                           className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
                             isApplied
-                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 cursor-not-allowed"
-                              : "bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90"
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 cursor-not-allowed border border-emerald-300 dark:border-emerald-800"
+                              : "bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90 shadow-sm"
                           }`}
                         >
                           {isApplied ? "Applied" : "Apply Now"}
@@ -1253,15 +1253,15 @@ export default function App() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredCompanies.map(comp => (
                 <div
                   key={comp.id}
-                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
+                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 shadow-md flex flex-col justify-between transition-all"
                 >
                   <div>
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold flex items-center justify-center text-base">
+                      <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold flex items-center justify-center text-base border border-slate-200 dark:border-slate-700">
                         {comp.logoText}
                       </div>
                       <div>
@@ -1274,7 +1274,7 @@ export default function App() {
                       {comp.description}
                     </p>
 
-                    <div className="space-y-1.5 text-xs py-2 border-y border-slate-100 dark:border-slate-800">
+                    <div className="space-y-1.5 text-xs py-2 border-y border-slate-200 dark:border-slate-800">
                       <div className="flex justify-between">
                         <span className="text-slate-400">Average CTC:</span>
                         <span className="font-bold text-slate-900 dark:text-white">{comp.avgPackage}</span>
@@ -1301,7 +1301,7 @@ export default function App() {
                         setJobSearch(comp.name);
                         setActiveTab("jobs");
                       }}
-                      className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg font-semibold"
+                      className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-200"
                     >
                       View Openings
                     </button>
@@ -1320,15 +1320,15 @@ export default function App() {
               <p className="text-xs text-slate-500 mt-0.5">Core hiring domains and skill requirements</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {roles.map(role => (
                 <div
                   key={role.id}
-                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4"
+                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 shadow-md space-y-4 transition-all"
                 >
                   <div className="flex justify-between items-start">
                     <h3 className="font-bold text-base text-slate-900 dark:text-white">{role.title}</h3>
-                    <span className="text-xs font-bold text-emerald-600">{role.averageSalary}</span>
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">{role.averageSalary}</span>
                   </div>
 
                   <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -1360,12 +1360,12 @@ export default function App() {
             </div>
 
             {myApplications.length === 0 ? (
-              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-500 space-y-3">
+              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-300 dark:border-slate-700 text-slate-500 space-y-3 shadow-sm">
                 <FileText className="h-8 w-8 mx-auto text-slate-400" />
                 <p className="font-bold text-sm">No applications submitted yet.</p>
                 <button
                   onClick={() => setActiveTab("jobs")}
-                  className="px-4 py-2 bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold rounded-xl"
+                  className="px-4 py-2 bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold rounded-xl shadow-sm"
                 >
                   Explore Jobs (5)
                 </button>
@@ -1375,7 +1375,7 @@ export default function App() {
                 {myApplications.map(app => (
                   <div
                     key={app.id}
-                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4"
+                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-md space-y-4 transition-all"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
                       <div>
@@ -1482,21 +1482,21 @@ export default function App() {
             </div>
 
             {/* Placed Students Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredPlaced.map(student => (
                 <div
                   key={student.id}
-                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3"
+                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 shadow-md space-y-3 transition-all"
                 >
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="font-bold text-sm text-slate-900 dark:text-white">{student.name}</h4>
                       <p className="text-[11px] text-slate-400 font-mono">{student.rollNo} • {student.branch}</p>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600">{student.packageLpa} LPA</span>
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">{student.packageLpa} LPA</span>
                   </div>
 
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl text-xs space-y-1">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl text-xs space-y-1 border border-slate-200 dark:border-slate-700">
                     <div className="flex justify-between">
                       <span className="text-slate-400">Placed at:</span>
                       <span className="font-bold text-slate-800 dark:text-slate-200">{student.company}</span>
