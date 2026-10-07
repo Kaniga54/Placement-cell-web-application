@@ -1117,32 +1117,72 @@ export default function App() {
 
         {/* ==================== 2. ABOUT TAB ==================== */}
         {activeTab === "about" && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <div className="p-8 sm:p-10 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-md)] space-y-4">
-              <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Directorate Overview</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--text)] tracking-tight">Training & Placement Cell</h2>
-              <p className="text-xs sm:text-sm text-[var(--text-soft)] leading-relaxed">
-                The Training and Placement Cell facilitates corporate partnerships, skill assessment workshops, algorithmic problem solving sessions, and seamless on-campus recruitment for graduating engineers.
-              </p>
+          <div className="max-w-5xl mx-auto space-y-6">
+            <div className="p-8 sm:p-12 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-md)] space-y-6">
+              <div>
+                <span className="text-[10px] font-extrabold tracking-[2px] text-[var(--accent)] uppercase block">
+                  Institutional Career Services & Corporate Relations
+                </span>
+                <h2 className="text-2xl sm:text-4xl font-extrabold text-[var(--text)] tracking-tight mt-1.5">
+                  Centre for Career Advancement & Placements
+                </h2>
+                <p className="text-xs sm:text-sm text-[var(--text-soft)] leading-relaxed mt-3">
+                  The Centre for Career Advancement & Corporate Relations serves as the strategic interface between university talent and leading global enterprises. We curate comprehensive career development initiatives—encompassing advanced algorithmic problem-solving, full-stack architecture bootcamps, executive leadership coaching, and domain-specific technical research—empowering graduating scholars to create immediate organizational impact.
+                </p>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface-soft)] border border-[var(--border)] space-y-1">
-                  <h4 className="font-extrabold text-xs text-[var(--text)] uppercase tracking-wider">Placement Policy</h4>
+              {/* 4 Pillars Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface-soft)] border border-[var(--border)] space-y-2">
+                  <div className="flex items-center space-x-2 text-[var(--accent)]">
+                    <ShieldCheck className="h-4 w-4" />
+                    <h4 className="font-extrabold text-xs uppercase tracking-wider text-[var(--text)]">Placement Charter & Policy</h4>
+                  </div>
                   <p className="text-xs text-[var(--text-soft)] leading-relaxed">
-                    One-Offer policy guarantees equitable opportunities across the cohort. Dream offer recipients remain locked from regular tier drives.
+                    Our merit-driven <em>Universal Opportunity Protocol</em> balances competitive excellence with equitable access across all engineering disciplines. Tiered recruitment structures (Super Dream 20+ LPA, Dream, and Core Sector) ensure every candidate realizes their peak professional aspirations while democratizing tier-1 corporate access.
                   </p>
                 </div>
-                <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface-soft)] border border-[var(--border)] space-y-1">
-                  <h4 className="font-extrabold text-xs text-[var(--text)] uppercase tracking-wider">Corporate Network</h4>
+
+                <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface-soft)] border border-[var(--border)] space-y-2">
+                  <div className="flex items-center space-x-2 text-[var(--accent)]">
+                    <Building2 className="h-4 w-4" />
+                    <h4 className="font-extrabold text-xs uppercase tracking-wider text-[var(--text)]">Global Corporate Alliances</h4>
+                  </div>
                   <p className="text-xs text-[var(--text-soft)] leading-relaxed">
-                    Active MoUs with 50+ multinational corporations for industrial internships, research programs, and direct campus recruiting.
+                    Anchored by 60+ active Memorandums of Understanding (MoUs) with Fortune 500 multinationals and frontier deep-tech innovators. We facilitate year-round industrial immersion, credit-bearing capstone internships, co-developed curriculum labs, and executive mentorship pipelines.
+                  </p>
+                </div>
+
+                <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface-soft)] border border-[var(--border)] space-y-2">
+                  <div className="flex items-center space-x-2 text-[var(--accent)]">
+                    <Compass className="h-4 w-4" />
+                    <h4 className="font-extrabold text-xs uppercase tracking-wider text-[var(--text)]">Industry Readiness & Skill Labs</h4>
+                  </div>
+                  <p className="text-xs text-[var(--text-soft)] leading-relaxed">
+                    Continuous multi-tiered capability development covering Distributed Computing, Large Language Models & AI Systems, Semiconductor VLSI, and Product Engineering, backed by automated aptitude benchmarking and live mock technical panel assessments.
+                  </p>
+                </div>
+
+                <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface-soft)] border border-[var(--border)] space-y-2">
+                  <div className="flex items-center space-x-2 text-[var(--accent)]">
+                    <Award className="h-4 w-4" />
+                    <h4 className="font-extrabold text-xs uppercase tracking-wider text-[var(--text)]">Alumni Career Mentorship</h4>
+                  </div>
+                  <p className="text-xs text-[var(--text-soft)] leading-relaxed">
+                    A global alumni network spanning Google, Amazon, Microsoft, and leading Silicon Valley enterprises actively delivers technical guidance, system design review sessions, and resume alignment workshops for pre-final and final year candidates.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-[var(--border)] text-xs">
-                <h4 className="font-bold text-xs text-[var(--text)] mb-1">Placement Desk</h4>
-                <p className="text-[var(--text-soft)]">Academic Directorate, Main Campus • <span className="font-mono text-[var(--accent)]">placement@apexplacement.edu</span></p>
+              {/* Placement Desk Footer */}
+              <div className="pt-6 border-t border-[var(--border)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
+                <div>
+                  <h4 className="font-bold text-xs text-[var(--text)]">Office of Corporate Relations & Placements</h4>
+                  <p className="text-[var(--text-muted)] text-[11px] mt-0.5">Central Academic Complex, Apex Directorate • Phone: +91 (044) 2899-4400</p>
+                </div>
+                <div className="px-4 py-2 rounded-[8px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] font-mono text-[11px]">
+                  placement.directorate@apexplacement.edu
+                </div>
               </div>
             </div>
           </div>
