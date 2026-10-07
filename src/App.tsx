@@ -29,7 +29,8 @@ import {
   Compass,
   CheckCircle2,
   Eye,
-  EyeOff
+  EyeOff,
+  Sparkles
 } from "lucide-react";
 
 // ================= DATA MODELS =================
@@ -358,7 +359,7 @@ export default function App() {
     }
   }, [darkMode]);
 
-  // Registered Users persistence in localStorage
+  // Registered Users persistence
   const [registeredUsers, setRegisteredUsers] = useState<UserAccount[]>(() => {
     const saved = localStorage.getItem("registered_users");
     if (saved) {
@@ -442,7 +443,7 @@ export default function App() {
     badge: "Dream" as const,
   });
 
-  // Action: Handle Registration -> Automatically transitions to Login screen
+  // Action: Handle Registration -> Transitions to Login
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!regName || !regEmail || !regPassword) {
@@ -479,14 +480,14 @@ export default function App() {
     setRegCgpa("");
     setRegPassword("");
 
-    // Set prefilled email for login, show success notice, and switch directly to Login tab
+    // Prefill login and switch tab
     setLoginEmail(newUser.email);
     setLoginPassword("");
     setAuthNotification("Registration successful! Please enter your password to sign in.");
     setAuthView("login");
   };
 
-  // Action: Handle Login -> Enters Inside Application
+  // Action: Handle Login -> Enters Portal
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginEmail || !loginPassword) {
@@ -505,7 +506,6 @@ export default function App() {
       setLoginPassword("");
       setActiveTab("home");
     } else {
-      // Fallback session
       const fallbackUser: UserAccount = {
         name: loginEmail.split("@")[0],
         email: loginEmail,
@@ -522,7 +522,7 @@ export default function App() {
     }
   };
 
-  // Action: Logout -> Returns to Standalone Login Screen
+  // Action: Logout
   const handleLogout = () => {
     setCurrentUser(null);
     localStorage.removeItem("current_user");
@@ -621,13 +621,13 @@ export default function App() {
   // =========================================================================
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-center items-center p-4 transition-colors duration-200">
+      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col justify-center items-center p-4 transition-colors duration-200">
         
         {/* Dark Mode Toggle Floating */}
         <div className="absolute top-6 right-6">
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 shadow-sm"
+            className="p-2.5 rounded-[12px] bg-[var(--surface)] border border-[var(--border)] text-[var(--text-soft)] hover:text-[var(--text)] shadow-[var(--shadow-sm)] transition-all"
             aria-label="Toggle theme"
           >
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -635,47 +635,47 @@ export default function App() {
         </div>
 
         {/* Center Standalone Card */}
-        <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-7 sm:p-8 shadow-xl space-y-6">
+        <div className="w-full max-w-md bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-7 sm:p-9 shadow-[var(--shadow-lg)] space-y-6">
           
-          {/* Header Brand */}
+          {/* Brand Header */}
           <div className="text-center space-y-2">
-            <div className="h-12 w-12 rounded-xl bg-slate-900 dark:bg-blue-600 text-white mx-auto flex items-center justify-center font-bold shadow-sm">
-              <Award className="h-6 w-6" />
+            <div className="w-[44px] h-[44px] rounded-[12px] bg-[var(--text)] text-white mx-auto flex items-center justify-center font-extrabold shadow-[var(--shadow-sm)]">
+              AP
             </div>
             <div>
-              <h1 className="text-xl font-extrabold text-slate-900 dark:text-white">ApexPlacement</h1>
-              <p className="text-xs text-slate-500 font-medium">Campus Recruitment & Training Portal</p>
+              <h1 className="text-xl font-extrabold text-[var(--text)] tracking-tight">ApexPlacement</h1>
+              <span className="text-[10px] font-bold text-[var(--text-muted)] tracking-wider uppercase">Campus Recruitment Directorate</span>
             </div>
           </div>
 
           {/* Clean Segment Tabs */}
-          <div className="flex border-b border-slate-200 dark:border-slate-800">
+          <div className="flex border-b border-[var(--border)]">
             <button
               onClick={() => { setAuthView("login"); setAuthNotification(null); }}
-              className={`flex-1 pb-2.5 text-xs font-bold transition-all border-b-2 ${
+              className={`flex-1 pb-3 text-xs font-bold transition-all border-b-2 ${
                 authView === "login"
-                  ? "border-slate-900 dark:border-blue-500 text-slate-900 dark:text-white"
-                  : "border-transparent text-slate-400 hover:text-slate-600"
+                  ? "border-[var(--accent)] text-[var(--accent)] font-extrabold"
+                  : "border-transparent text-[var(--text-soft)] hover:text-[var(--text)]"
               }`}
             >
               Sign In
             </button>
             <button
               onClick={() => { setAuthView("register"); setAuthNotification(null); }}
-              className={`flex-1 pb-2.5 text-xs font-bold transition-all border-b-2 ${
+              className={`flex-1 pb-3 text-xs font-bold transition-all border-b-2 ${
                 authView === "register"
-                  ? "border-slate-900 dark:border-blue-500 text-slate-900 dark:text-white"
-                  : "border-transparent text-slate-400 hover:text-slate-600"
+                  ? "border-[var(--accent)] text-[var(--accent)] font-extrabold"
+                  : "border-transparent text-[var(--text-soft)] hover:text-[var(--text)]"
               }`}
             >
               Create Account
             </button>
           </div>
 
-          {/* Registration Success Notification */}
+          {/* Registration Success Toast */}
           {authNotification && (
-            <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs flex items-start gap-2.5">
-              <CheckCircle className="h-4 w-4 shrink-0 mt-0.5 text-emerald-600" />
+            <div className="p-3.5 rounded-[var(--radius-sm)] bg-[var(--green-light)] border border-[#dcebe0] text-[var(--green)] text-xs flex items-start gap-2.5 font-medium">
+              <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <span>{authNotification}</span>
             </div>
           )}
@@ -684,36 +684,36 @@ export default function App() {
           {authView === "login" ? (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Email / Student ID</label>
+                <label className="block text-[11px] font-bold text-[var(--text-soft)] mb-1.5 uppercase tracking-wider">Email / Student ID</label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                  <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-[var(--text-muted)]" />
                   <input
                     type="email"
                     required
                     placeholder="name@campus.edu"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:focus:ring-blue-500"
+                    className="w-full pl-10 pr-3.5 py-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[rgba(201,71,40,0.08)] transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Password</label>
+                <label className="block text-[11px] font-bold text-[var(--text-soft)] mb-1.5 uppercase tracking-wider">Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                  <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-[var(--text-muted)]" />
                   <input
                     type={showPassword ? "text" : "password"}
                     required
                     placeholder="••••••••"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:focus:ring-blue-500"
+                    className="w-full pl-10 pr-10 py-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-4 focus:ring-[rgba(201,71,40,0.08)] transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3.5 top-3.5 text-[var(--text-muted)] hover:text-[var(--text)]"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -722,17 +722,17 @@ export default function App() {
 
               <button
                 type="submit"
-                className="w-full py-3 bg-slate-900 text-white dark:bg-blue-600 hover:opacity-95 font-bold text-xs rounded-xl shadow-md transition"
+                className="w-full py-3 bg-[var(--accent)] hover:bg-[var(--accent-dark)] text-white font-bold text-xs rounded-[10px] shadow-[0_8px_20px_rgba(201,71,40,0.2)] hover:shadow-[0_12px_25px_rgba(201,71,40,0.26)] hover:-translate-y-0.5 transition-all cursor-pointer"
               >
                 Sign In to Portal
               </button>
 
-              <div className="text-center text-xs text-slate-500 pt-2">
+              <div className="text-center text-xs text-[var(--text-soft)] pt-1">
                 <span>Don't have an account? </span>
                 <button
                   type="button"
                   onClick={() => { setAuthView("register"); setAuthNotification(null); }}
-                  className="text-slate-900 dark:text-blue-400 font-bold hover:underline"
+                  className="text-[var(--accent)] font-bold hover:underline"
                 >
                   Register here
                 </button>
@@ -742,13 +742,13 @@ export default function App() {
             /* ================= REGISTER FORM ================= */
             <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Account Role</label>
-                <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold">
+                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Account Role</label>
+                <div className="grid grid-cols-2 gap-1 p-1 bg-[var(--surface-soft)] rounded-[10px] text-xs font-semibold">
                   <button
                     type="button"
                     onClick={() => setRegRole("student")}
-                    className={`py-1.5 rounded-md transition ${
-                      regRole === "student" ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm" : "text-slate-500"
+                    className={`py-1.5 rounded-[8px] transition ${
+                      regRole === "student" ? "bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow-sm)] font-bold" : "text-[var(--text-soft)]"
                     }`}
                   >
                     Student
@@ -756,8 +756,8 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setRegRole("admin")}
-                    className={`py-1.5 rounded-md transition ${
-                      regRole === "admin" ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm" : "text-slate-500"
+                    className={`py-1.5 rounded-[8px] transition ${
+                      regRole === "admin" ? "bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow-sm)] font-bold" : "text-[var(--text-soft)]"
                     }`}
                   >
                     Placement Officer
@@ -766,38 +766,38 @@ export default function App() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Full Name</label>
+                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Full Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Aravind Kumar"
                   value={regName}
                   onChange={(e) => setRegName(e.target.value)}
-                  className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 dark:focus:ring-blue-500"
+                  className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               {regRole === "student" && (
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-500 mb-1">Roll Number</label>
+                    <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Roll Number</label>
                     <input
                       type="text"
                       placeholder="CS26012"
                       value={regRollNo}
                       onChange={(e) => setRegRollNo(e.target.value)}
-                      className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                      className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)]"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-500 mb-1">CGPA</label>
+                    <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">CGPA</label>
                     <input
                       type="number"
                       step="0.01"
                       placeholder="8.5"
                       value={regCgpa}
                       onChange={(e) => setRegCgpa(e.target.value)}
-                      className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                      className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)]"
                     />
                   </div>
                 </div>
@@ -805,11 +805,11 @@ export default function App() {
 
               {regRole === "student" && (
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-500 mb-1">Branch</label>
+                  <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Branch</label>
                   <select
                     value={regBranch}
                     onChange={(e) => setRegBranch(e.target.value)}
-                    className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                    className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)]"
                   >
                     <option value="Computer Science (CSE)">Computer Science (CSE)</option>
                     <option value="Information Technology (IT)">Information Technology (IT)</option>
@@ -821,42 +821,42 @@ export default function App() {
               )}
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Email Address</label>
+                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Email Address</label>
                 <input
                   type="email"
                   required
                   placeholder="name@campus.edu"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
-                  className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                  className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Password</label>
+                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Password</label>
                 <input
                   type="password"
                   required
                   placeholder="Create a strong password"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
-                  className="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                  className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)]"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-slate-900 text-white dark:bg-blue-600 hover:opacity-95 font-bold text-xs rounded-xl shadow-md transition"
+                className="w-full py-3 bg-[var(--accent)] hover:bg-[var(--accent-dark)] text-white font-bold text-xs rounded-[10px] shadow-[0_8px_20px_rgba(201,71,40,0.2)] hover:shadow-[0_12px_25px_rgba(201,71,40,0.26)] hover:-translate-y-0.5 transition-all cursor-pointer"
               >
                 Complete Registration
               </button>
 
-              <div className="text-center text-xs text-slate-500 pt-1">
+              <div className="text-center text-xs text-[var(--text-soft)] pt-1">
                 <span>Already registered? </span>
                 <button
                   type="button"
                   onClick={() => { setAuthView("login"); setAuthNotification(null); }}
-                  className="text-slate-900 dark:text-blue-400 font-bold hover:underline"
+                  className="text-[var(--accent)] font-bold hover:underline"
                 >
                   Sign in
                 </button>
@@ -866,7 +866,7 @@ export default function App() {
         </div>
 
         {/* Footer */}
-        <p className="mt-8 text-xs text-slate-400">© 2026 ApexPlacement Portal • All rights reserved.</p>
+        <p className="mt-8 text-xs text-[var(--text-muted)]">© 2026 ApexPlacement • All rights reserved.</p>
       </div>
     );
   }
@@ -875,53 +875,56 @@ export default function App() {
   // 2. MAIN APPLICATION (Shown ONLY after Login)
   // =========================================================================
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors duration-200 flex flex-col font-sans">
       
       {/* ================= HEADER / NAVBAR ================= */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full border-b border-[var(--border)] bg-[rgba(247,245,241,0.92)] dark:bg-[rgba(20,20,19,0.92)] backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[74px] flex items-center justify-between">
           
           {/* Logo */}
           <div 
             onClick={() => setActiveTab("home")}
             className="flex items-center space-x-3 cursor-pointer select-none"
           >
-            <div className="h-9 w-9 rounded-lg bg-slate-900 dark:bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
-              <Award className="h-5 w-5" />
+            <div className="w-[38px] h-[38px] rounded-[10px] bg-[var(--text)] text-white flex items-center justify-center font-extrabold text-sm shadow-[var(--shadow-sm)]">
+              AP
             </div>
             <div>
-              <span className="font-bold text-base tracking-tight text-slate-900 dark:text-white">
+              <span className="font-extrabold text-sm tracking-tight text-[var(--text)] leading-none block">
                 ApexPlacement
               </span>
-              <p className="text-[10px] text-slate-500 font-medium">Campus Placement Portal</p>
+              <span className="text-[9px] font-bold text-[var(--text-muted)] tracking-wider uppercase block mt-1">
+                Campus Career Portal
+              </span>
             </div>
           </div>
 
           {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          <nav className="hidden lg:flex items-center space-x-6">
             {[
-              { id: "home", label: "Home", icon: Award },
-              { id: "about", label: "About", icon: Info },
-              { id: "jobs", label: "Jobs", icon: Briefcase },
-              { id: "companies", label: "Companies", icon: Building2 },
-              { id: "roles", label: "Roles", icon: Compass },
-              { id: "tracker", label: "Applier Track", icon: Clock },
-              { id: "placed", label: "Placed Students", icon: GraduationCap },
+              { id: "home", label: "Home" },
+              { id: "about", label: "About" },
+              { id: "jobs", label: "Jobs" },
+              { id: "companies", label: "Companies" },
+              { id: "roles", label: "Roles" },
+              { id: "tracker", label: "Applier Track" },
+              { id: "placed", label: "Placed Students" },
             ].map(item => {
-              const IconComp = item.icon;
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                  className={`text-xs font-semibold relative py-1 transition-colors ${
                     isActive
-                      ? "bg-slate-900 text-white dark:bg-blue-600"
-                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                      ? "text-[var(--text)] font-extrabold"
+                      : "text-[var(--text-soft)] hover:text-[var(--text)]"
                   }`}
                 >
-                  <IconComp className="h-3.5 w-3.5" />
                   {item.label}
+                  {isActive && (
+                    <span className="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
+                  )}
                 </button>
               );
             })}
@@ -929,13 +932,12 @@ export default function App() {
             {currentUser?.role === "admin" && (
               <button
                 onClick={() => setActiveTab("admin")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                className={`px-3 py-1 rounded-[8px] text-xs font-bold transition-all ${
                   activeTab === "admin"
-                    ? "bg-amber-600 text-white"
-                    : "text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40"
+                    ? "bg-[var(--accent)] text-white shadow-[0_4px_12px_rgba(201,71,40,0.2)]"
+                    : "text-[var(--accent)] bg-[var(--accent-light)] hover:bg-[var(--accent)] hover:text-white"
                 }`}
               >
-                <ShieldCheck className="h-3.5 w-3.5" />
                 Admin Panel
               </button>
             )}
@@ -943,22 +945,29 @@ export default function App() {
 
           {/* Right Action Items */}
           <div className="flex items-center space-x-3">
+            {/* Live Online Pill */}
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-[var(--border)] rounded-full bg-[var(--surface)] text-[var(--text-soft)] text-[11px] font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)] shadow-[0_0_0_3px_var(--green-light)]"></span>
+              <span>2026 Drive Active</span>
+            </div>
+
+            {/* Dark Mode Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+              className="p-2 rounded-[10px] bg-[var(--surface)] border border-[var(--border)] text-[var(--text-soft)] hover:text-[var(--text)] transition"
               aria-label="Toggle theme"
             >
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
             <div className="flex items-center space-x-2">
-              <div className="hidden sm:flex flex-col text-right">
-                <span className="text-xs font-bold text-slate-900 dark:text-white leading-tight">{currentUser.name}</span>
-                <span className="text-[10px] text-slate-500 capitalize">{currentUser.role} {currentUser.rollNo ? `• ${currentUser.rollNo}` : ""}</span>
+              <div className="hidden md:flex flex-col text-right">
+                <span className="text-xs font-bold text-[var(--text)] leading-tight">{currentUser.name}</span>
+                <span className="text-[10px] text-[var(--text-muted)] capitalize">{currentUser.role} {currentUser.rollNo ? `• ${currentUser.rollNo}` : ""}</span>
               </div>
               <button
                 onClick={handleLogout}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] text-xs font-semibold text-[var(--text-soft)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition flex items-center gap-1.5 cursor-pointer"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span>Logout</span>
@@ -968,7 +977,7 @@ export default function App() {
         </div>
 
         {/* Mobile Sub Navigation */}
-        <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-2 flex items-center space-x-1.5 overflow-x-auto no-scrollbar">
+        <div className="lg:hidden border-t border-[var(--border)] px-4 py-2 flex items-center space-x-1.5 overflow-x-auto no-scrollbar">
           {[
             { id: "home", label: "Home" },
             { id: "about", label: "About" },
@@ -981,10 +990,10 @@ export default function App() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`px-3 py-1 rounded-md text-xs font-medium shrink-0 ${
+              className={`px-3 py-1 rounded-[8px] text-xs font-semibold shrink-0 ${
                 activeTab === item.id
-                  ? "bg-slate-900 text-white dark:bg-blue-600"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                  ? "bg-[var(--accent)] text-white"
+                  : "bg-[var(--surface)] text-[var(--text-soft)] border border-[var(--border)]"
               }`}
             >
               {item.label}
@@ -1001,76 +1010,76 @@ export default function App() {
           <div className="space-y-8">
             
             {/* Hero Section */}
-            <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-                <span>Welcome, {currentUser.name} • Drive Season 2026</span>
+            <div className="p-8 sm:p-10 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-md)] space-y-5">
+              <div className="inline-flex items-center space-x-2 text-[var(--accent)] text-[10px] font-extrabold tracking-[2px] uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
+                <span>Campus Recruitment System • Batch of 2026</span>
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
-                Campus Recruitment & Career Portal
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-[-2px] text-[var(--text)] leading-[1.05]">
+                Launch Your Career with <strong className="text-[var(--accent)] font-extrabold inline">ApexPlacement</strong>
               </h1>
 
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
-                Discover curated job opportunities, submit applications, track your interview pipeline, and explore verified placement records.
+              <p className="text-xs sm:text-sm text-[var(--text-soft)] leading-relaxed max-w-3xl">
+                The centralized digital placement platform connecting ambitious students with premier technology corporations, engineering enterprises, and analytics consultancies.
               </p>
 
               <div className="pt-2 flex flex-wrap gap-3">
                 <button
                   onClick={() => setActiveTab("jobs")}
-                  className="px-4 py-2 bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90 font-semibold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition"
+                  className="px-5 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-dark)] text-white font-bold text-xs rounded-[10px] shadow-[0_8px_20px_rgba(201,71,40,0.2)] hover:shadow-[0_12px_25px_rgba(201,71,40,0.26)] hover:-translate-y-0.5 flex items-center gap-2 transition cursor-pointer"
                 >
-                  <Briefcase className="h-3.5 w-3.5" /> View Active Openings (5)
+                  <Briefcase className="h-3.5 w-3.5" /> Explore Openings (5)
                 </button>
                 <button
                   onClick={() => setActiveTab("tracker")}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-xs rounded-xl transition flex items-center gap-1.5"
+                  className="px-5 py-2.5 bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)] text-[var(--text)] font-semibold text-xs rounded-[10px] shadow-[var(--shadow-sm)] hover:-translate-y-0.5 transition flex items-center gap-2 cursor-pointer"
                 >
-                  <Clock className="h-3.5 w-3.5" /> Track My Applications ({myApplications.length})
+                  <Clock className="h-3.5 w-3.5" /> Track Applications ({myApplications.length})
                 </button>
                 <button
                   onClick={() => setActiveTab("placed")}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-xs rounded-xl transition flex items-center gap-1.5"
+                  className="px-5 py-2.5 bg-[var(--surface-soft)] text-[var(--text-soft)] hover:text-[var(--text)] font-semibold text-xs rounded-[10px] transition flex items-center gap-2 cursor-pointer"
                 >
                   <GraduationCap className="h-3.5 w-3.5" /> Placed Candidates
                 </button>
               </div>
             </div>
 
-            {/* Key Metrics Grid */}
+            {/* Key Statistics Section */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs text-slate-500 font-medium block">Highest CTC</span>
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">28 LPA</span>
-                <span className="text-[10px] text-emerald-600 font-semibold block mt-1">Google • Super Dream</span>
+              <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:-translate-y-1 transition-all">
+                <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--text-muted)] uppercase block">Highest CTC</span>
+                <strong className="text-3xl font-extrabold text-[var(--text)] tracking-[-1px] block mt-2">28 LPA</strong>
+                <span className="text-[10px] font-bold text-[var(--accent)] block mt-2">Google • Super Dream</span>
               </div>
-              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs text-slate-500 font-medium block">Average CTC</span>
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">18.5 LPA</span>
-                <span className="text-[10px] text-blue-600 font-semibold block mt-1">+18% vs Last Year</span>
+              <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:-translate-y-1 transition-all">
+                <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--text-muted)] uppercase block">Average CTC</span>
+                <strong className="text-3xl font-extrabold text-[var(--text)] tracking-[-1px] block mt-2">18.5 LPA</strong>
+                <span className="text-[10px] font-bold text-[var(--green)] block mt-2">+18% vs Last Year</span>
               </div>
-              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs text-slate-500 font-medium block">Total Placed</span>
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">{placedStudents.length} Offers</span>
-                <span className="text-[10px] text-purple-600 font-semibold block mt-1">Class of 2026</span>
+              <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:-translate-y-1 transition-all">
+                <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--text-muted)] uppercase block">Total Offers</span>
+                <strong className="text-3xl font-extrabold text-[var(--text)] tracking-[-1px] block mt-2">{placedStudents.length} Offers</strong>
+                <span className="text-[10px] font-bold text-[var(--text-soft)] block mt-2">Class of 2026</span>
               </div>
-              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs text-slate-500 font-medium block">Partner Firms</span>
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">{companies.length} Corporate</span>
-                <span className="text-[10px] text-amber-600 font-semibold block mt-1">Tier-1 Employers</span>
+              <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:-translate-y-1 transition-all">
+                <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--text-muted)] uppercase block">Partners</span>
+                <strong className="text-3xl font-extrabold text-[var(--text)] tracking-[-1px] block mt-2">{companies.length} Tier-1</strong>
+                <span className="text-[10px] font-bold text-[var(--yellow)] block mt-2">Visiting MNCs</span>
               </div>
             </div>
 
-            {/* Featured 5 Job Openings Preview */}
+            {/* Featured Job Openings */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Active Placement Drives (5)</h3>
-                  <p className="text-xs text-slate-500">Curated opportunities currently open for campus applications</p>
+                  <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Campus Recruitment</span>
+                  <h3 className="text-lg font-extrabold text-[var(--text)] tracking-tight mt-0.5">Active Placement Drives</h3>
                 </div>
                 <button
                   onClick={() => setActiveTab("jobs")}
-                  className="text-xs font-semibold text-slate-900 dark:text-blue-400 hover:underline flex items-center gap-1"
+                  className="text-xs font-bold text-[var(--accent)] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   View all openings <ArrowRight className="h-3.5 w-3.5" />
                 </button>
@@ -1080,21 +1089,21 @@ export default function App() {
                 {jobs.slice(0, 3).map(job => (
                   <div
                     key={job.id}
-                    className="p-5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 shadow-md flex flex-col justify-between transition-all"
+                    className="p-6 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1 flex flex-col justify-between transition-all"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-slate-900 dark:text-white">{job.company}</span>
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">{job.salary}</span>
+                        <span className="text-xs font-bold text-[var(--text)]">{job.company}</span>
+                        <span className="text-xs font-extrabold text-[var(--accent)] bg-[var(--accent-light)] px-2.5 py-0.5 rounded-full">{job.salary}</span>
                       </div>
-                      <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{job.role}</h4>
-                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{job.description}</p>
+                      <h4 className="font-bold text-sm text-[var(--text)] tracking-tight">{job.role}</h4>
+                      <p className="text-xs text-[var(--text-soft)] mt-1.5 line-clamp-2 leading-relaxed">{job.description}</p>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
-                      <span className="text-[11px] text-slate-400">Min CGPA: {job.minCgpa}</span>
+                    <div className="mt-5 pt-4 border-t border-[var(--border)] flex justify-between items-center text-xs">
+                      <span className="text-[11px] text-[var(--text-muted)] font-medium">Min CGPA: {job.minCgpa}</span>
                       <button
                         onClick={() => handleApplyJob(job)}
-                        className="px-3.5 py-1.5 bg-slate-900 text-white dark:bg-blue-600 rounded-lg text-xs font-semibold shadow-sm"
+                        className="px-4 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-dark)] text-white rounded-[8px] text-xs font-bold shadow-[0_4px_12px_rgba(201,71,40,0.2)] hover:-translate-y-0.5 transition cursor-pointer"
                       >
                         Apply
                       </button>
@@ -1109,31 +1118,31 @@ export default function App() {
         {/* ==================== 2. ABOUT TAB ==================== */}
         {activeTab === "about" && (
           <div className="max-w-4xl mx-auto space-y-6">
-            <div className="p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Placement Directorate</span>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white">Training & Placement Cell</h2>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                The Training and Placement Cell facilitates career counseling, algorithmic training, and placement drives with national and global technology leaders.
+            <div className="p-8 sm:p-10 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-md)] space-y-4">
+              <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Directorate Overview</span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--text)] tracking-tight">Training & Placement Cell</h2>
+              <p className="text-xs sm:text-sm text-[var(--text-soft)] leading-relaxed">
+                The Training and Placement Cell facilitates corporate partnerships, skill assessment workshops, algorithmic problem solving sessions, and seamless on-campus recruitment for graduating engineers.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
-                  <h4 className="font-bold text-xs text-slate-900 dark:text-white mb-1">Placement Policy</h4>
-                  <p className="text-xs text-slate-500">
-                    One-Offer Policy ensures equal opportunity across the graduating cohort. Students receiving Dream category offers remain locked from regular tier recruitment.
+                <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface-soft)] border border-[var(--border)] space-y-1">
+                  <h4 className="font-extrabold text-xs text-[var(--text)] uppercase tracking-wider">Placement Policy</h4>
+                  <p className="text-xs text-[var(--text-soft)] leading-relaxed">
+                    One-Offer policy guarantees equitable opportunities across the cohort. Dream offer recipients remain locked from regular tier drives.
                   </p>
                 </div>
-                <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
-                  <h4 className="font-bold text-xs text-slate-900 dark:text-white mb-1">Corporate Relations</h4>
-                  <p className="text-xs text-slate-500">
-                    Over 50+ MoUs with multinational corporations for semester internships, technology workshops, and direct on-campus hiring.
+                <div className="p-6 rounded-[var(--radius-md)] bg-[var(--surface-soft)] border border-[var(--border)] space-y-1">
+                  <h4 className="font-extrabold text-xs text-[var(--text)] uppercase tracking-wider">Corporate Network</h4>
+                  <p className="text-xs text-[var(--text-soft)] leading-relaxed">
+                    Active MoUs with 50+ multinational corporations for industrial internships, research programs, and direct campus recruiting.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-slate-100 dark:border-slate-800 text-xs">
-                <h4 className="font-bold text-xs text-slate-900 dark:text-white mb-2">Placement Office Contact</h4>
-                <p className="text-slate-500">Administrative Block, Academic Campus • Email: <span className="font-mono text-slate-700 dark:text-slate-300">placement@apexplacement.edu</span></p>
+              <div className="pt-6 border-t border-[var(--border)] text-xs">
+                <h4 className="font-bold text-xs text-[var(--text)] mb-1">Placement Desk</h4>
+                <p className="text-[var(--text-soft)]">Academic Directorate, Main Campus • <span className="font-mono text-[var(--accent)]">placement@apexplacement.edu</span></p>
               </div>
             </div>
           </div>
@@ -1142,27 +1151,27 @@ export default function App() {
         {/* ==================== 3. JOBS TAB (5 CLEAN JOBS) ==================== */}
         {activeTab === "jobs" && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-6 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Active Campus Openings (5)</h2>
-                <p className="text-xs text-slate-500">Curated opportunities for Class of 2026</p>
+                <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Verified Openings</span>
+                <h2 className="text-xl font-extrabold text-[var(--text)] tracking-tight">Campus Recruitment Drives (5)</h2>
               </div>
 
               <div className="flex items-center space-x-3">
                 <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-[var(--text-muted)]" />
                   <input
                     type="text"
                     placeholder="Search role, company..."
                     value={jobSearch}
                     onChange={(e) => setJobSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                    className="w-full pl-9 pr-3.5 py-2 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 {currentUser?.role === "admin" && (
                   <button
                     onClick={() => setShowAddJobModal(true)}
-                    className="px-3 py-1.5 bg-slate-900 text-white dark:bg-blue-600 rounded-xl text-xs font-bold shrink-0"
+                    className="px-4 py-2 bg-[var(--accent)] text-white rounded-[10px] text-xs font-bold shadow-[0_4px_12px_rgba(201,71,40,0.2)] hover:bg-[var(--accent-dark)] transition shrink-0 cursor-pointer"
                   >
                     + Post Job
                   </button>
@@ -1177,48 +1186,48 @@ export default function App() {
                 return (
                   <div
                     key={job.id}
-                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 dark:hover:border-slate-500 shadow-md hover:shadow-lg transition-all flex flex-col justify-between"
+                    className="p-7 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1 transition-all flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-2">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--surface-soft)] text-[var(--text-soft)] border border-[var(--border)]">
                           {job.badge}
                         </span>
-                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800/60">{job.salary}</span>
+                        <span className="text-xs font-extrabold text-[var(--accent)] bg-[var(--accent-light)] px-3 py-1 rounded-full">{job.salary}</span>
                       </div>
 
-                      <h3 className="font-bold text-base text-slate-900 dark:text-white mt-1">{job.role}</h3>
-                      <p className="text-xs font-semibold text-slate-500 mt-0.5">{job.company} • {job.location}</p>
+                      <h3 className="font-extrabold text-base text-[var(--text)] tracking-tight mt-1">{job.role}</h3>
+                      <p className="text-xs font-semibold text-[var(--text-soft)] mt-0.5">{job.company} • {job.location}</p>
 
-                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-3 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-[var(--text-soft)] mt-3 line-clamp-2 leading-relaxed">
                         {job.description}
                       </p>
 
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         {job.requirements.map((r, i) => (
-                          <span key={i} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-[10px] text-slate-600 dark:text-slate-400">
+                          <span key={i} className="px-2.5 py-0.5 bg-[var(--surface-soft)] border border-[var(--border)] rounded-[6px] text-[10px] font-medium text-[var(--text-soft)]">
                             {r}
                           </span>
                         ))}
                       </div>
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-                      <span className="text-[11px] text-slate-400">Deadline: {job.deadline}</span>
+                    <div className="mt-6 pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs">
+                      <span className="text-[11px] text-[var(--text-muted)] font-medium">Deadline: {job.deadline}</span>
                       <div className="flex space-x-2">
                         <button
                           onClick={() => setSelectedJobDetails(job)}
-                          className="px-3 py-1.5 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                          className="px-3.5 py-1.5 border border-[var(--border)] rounded-[8px] text-xs font-bold text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition cursor-pointer"
                         >
                           Details
                         </button>
                         <button
                           onClick={() => handleApplyJob(job)}
                           disabled={isApplied}
-                          className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
+                          className={`px-4 py-1.5 rounded-[8px] text-xs font-bold transition cursor-pointer ${
                             isApplied
-                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 cursor-not-allowed border border-emerald-300 dark:border-emerald-800"
-                              : "bg-slate-900 text-white dark:bg-blue-600 hover:opacity-90 shadow-sm"
+                              ? "bg-[var(--green-light)] text-[var(--green)] cursor-not-allowed border border-[#dcebe0]"
+                              : "bg-[var(--accent)] hover:bg-[var(--accent-dark)] text-white shadow-[0_4px_12px_rgba(201,71,40,0.2)] hover:-translate-y-0.5"
                           }`}
                         >
                           {isApplied ? "Applied" : "Apply Now"}
@@ -1235,20 +1244,20 @@ export default function App() {
         {/* ==================== 4. COMPANIES TAB ==================== */}
         {activeTab === "companies" && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-6 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recruiting Corporate Partners ({filteredCompanies.length})</h2>
-                <p className="text-xs text-slate-500">Hiring schedule and recruitment criteria</p>
+                <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Corporate Partners</span>
+                <h2 className="text-xl font-extrabold text-[var(--text)] tracking-tight">Recruiting Organizations ({filteredCompanies.length})</h2>
               </div>
 
               <div className="relative w-full sm:w-64">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   placeholder="Search company..."
                   value={companySearch}
                   onChange={(e) => setCompanySearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                  className="w-full pl-9 pr-3.5 py-2 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
             </div>
@@ -1257,42 +1266,42 @@ export default function App() {
               {filteredCompanies.map(comp => (
                 <div
                   key={comp.id}
-                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 shadow-md flex flex-col justify-between transition-all"
+                  className="p-7 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1 flex flex-col justify-between transition-all"
                 >
                   <div>
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold flex items-center justify-center text-base border border-slate-200 dark:border-slate-700">
+                      <div className="w-[42px] h-[42px] rounded-[10px] bg-[var(--text)] text-white font-extrabold flex items-center justify-center text-sm shadow-[var(--shadow-sm)]">
                         {comp.logoText}
                       </div>
                       <div>
-                        <h3 className="font-bold text-sm text-slate-900 dark:text-white">{comp.name}</h3>
-                        <span className="text-[11px] text-slate-400">{comp.industry}</span>
+                        <h3 className="font-extrabold text-sm text-[var(--text)]">{comp.name}</h3>
+                        <span className="text-[11px] text-[var(--text-muted)]">{comp.industry}</span>
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                    <p className="text-xs text-[var(--text-soft)] leading-relaxed mb-4">
                       {comp.description}
                     </p>
 
-                    <div className="space-y-1.5 text-xs py-2 border-y border-slate-200 dark:border-slate-800">
+                    <div className="space-y-2 text-xs py-3 border-y border-[var(--border)]">
                       <div className="flex justify-between">
-                        <span className="text-slate-400">Average CTC:</span>
-                        <span className="font-bold text-slate-900 dark:text-white">{comp.avgPackage}</span>
+                        <span className="text-[var(--text-muted)] font-medium">Average CTC:</span>
+                        <span className="font-extrabold text-[var(--accent)]">{comp.avgPackage}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">Visiting Date:</span>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300">{comp.visitingDate}</span>
+                        <span className="text-[var(--text-muted)] font-medium">Visiting Date:</span>
+                        <span className="font-semibold text-[var(--text)]">{comp.visitingDate}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-2 flex justify-between items-center text-xs">
+                  <div className="mt-5 pt-2 flex justify-between items-center text-xs">
                     <button
                       onClick={() => {
                         setSelectedPlacedCompany(comp.name);
                         setActiveTab("placed");
                       }}
-                      className="text-slate-900 dark:text-blue-400 font-semibold hover:underline"
+                      className="text-[var(--accent)] font-bold hover:underline cursor-pointer"
                     >
                       Placed Students
                     </button>
@@ -1301,7 +1310,7 @@ export default function App() {
                         setJobSearch(comp.name);
                         setActiveTab("jobs");
                       }}
-                      className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-200"
+                      className="px-3.5 py-1.5 bg-[var(--surface-soft)] text-[var(--text)] rounded-[8px] font-bold border border-[var(--border)] hover:border-[var(--accent)] transition cursor-pointer"
                     >
                       View Openings
                     </button>
@@ -1315,31 +1324,31 @@ export default function App() {
         {/* ==================== 5. ROLES TAB ==================== */}
         {activeTab === "roles" && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Career Tracks & Competency Matrices</h2>
-              <p className="text-xs text-slate-500 mt-0.5">Core hiring domains and skill requirements</p>
+            <div className="p-6 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)]">
+              <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Career Roadmaps</span>
+              <h2 className="text-xl font-extrabold text-[var(--text)] tracking-tight">Specialized Competency Domains</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {roles.map(role => (
                 <div
                   key={role.id}
-                  className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 shadow-md space-y-4 transition-all"
+                  className="p-7 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1 space-y-4 transition-all"
                 >
                   <div className="flex justify-between items-start">
-                    <h3 className="font-bold text-base text-slate-900 dark:text-white">{role.title}</h3>
-                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">{role.averageSalary}</span>
+                    <h3 className="font-extrabold text-base text-[var(--text)] tracking-tight">{role.title}</h3>
+                    <span className="text-xs font-extrabold text-[var(--accent)] bg-[var(--accent-light)] px-3 py-1 rounded-full">{role.averageSalary}</span>
                   </div>
 
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <p className="text-xs text-[var(--text-soft)] leading-relaxed">
                     {role.description}
                   </p>
 
                   <div className="space-y-2">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Recommended Skills</span>
+                    <span className="text-[9px] font-extrabold text-[var(--text-muted)] uppercase tracking-wider block">Recommended Skills</span>
                     <div className="flex flex-wrap gap-1.5">
                       {role.skills.map((s, idx) => (
-                        <span key={idx} className="px-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-medium text-slate-700 dark:text-slate-300">
+                        <span key={idx} className="px-2.5 py-1 bg-[var(--surface-soft)] border border-[var(--border)] rounded-[8px] text-xs font-semibold text-[var(--text)]">
                           {s}
                         </span>
                       ))}
@@ -1354,18 +1363,18 @@ export default function App() {
         {/* ==================== 6. APPLIER TRACK ==================== */}
         {activeTab === "tracker" && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Application Status Tracker</h2>
-              <p className="text-xs text-slate-500">Live recruitment progress stages</p>
+            <div className="p-6 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)]">
+              <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Live Tracking</span>
+              <h2 className="text-xl font-extrabold text-[var(--text)] tracking-tight">Application Pipeline Progress</h2>
             </div>
 
             {myApplications.length === 0 ? (
-              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-300 dark:border-slate-700 text-slate-500 space-y-3 shadow-sm">
-                <FileText className="h-8 w-8 mx-auto text-slate-400" />
-                <p className="font-bold text-sm">No applications submitted yet.</p>
+              <div className="p-12 text-center bg-[var(--surface)] rounded-[var(--radius-md)] border border-[var(--border)] text-[var(--text-soft)] space-y-3 shadow-[var(--shadow-sm)]">
+                <FileText className="h-8 w-8 mx-auto text-[var(--text-muted)]" />
+                <p className="font-bold text-sm text-[var(--text)]">No applications submitted yet.</p>
                 <button
                   onClick={() => setActiveTab("jobs")}
-                  className="px-4 py-2 bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold rounded-xl shadow-sm"
+                  className="px-5 py-2.5 bg-[var(--accent)] text-white text-xs font-bold rounded-[10px] shadow-[0_4px_12px_rgba(201,71,40,0.2)] hover:bg-[var(--accent-dark)] transition cursor-pointer"
                 >
                   Explore Jobs (5)
                 </button>
@@ -1375,17 +1384,17 @@ export default function App() {
                 {myApplications.map(app => (
                   <div
                     key={app.id}
-                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 shadow-md space-y-4 transition-all"
+                    className="p-7 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] space-y-5 transition-all"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[var(--border)]">
                       <div>
-                        <h3 className="font-bold text-sm text-slate-900 dark:text-white">{app.role} • <span className="text-slate-500">{app.company}</span></h3>
-                        <span className="text-[11px] text-slate-400">Candidate: {app.studentName} ({app.rollNo}) • Applied: {app.appliedDate}</span>
+                        <h3 className="font-extrabold text-sm text-[var(--text)]">{app.role} • <span className="text-[var(--text-soft)]">{app.company}</span></h3>
+                        <span className="text-[11px] text-[var(--text-muted)]">Candidate: {app.studentName} ({app.rollNo}) • Applied on {app.appliedDate}</span>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold self-start sm:self-auto ${
-                        app.stage === "Selected" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" :
-                        app.stage === "Rejected" ? "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300" :
-                        "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200"
+                      <span className={`px-3 py-1 rounded-full text-xs font-extrabold self-start sm:self-auto ${
+                        app.stage === "Selected" ? "bg-[var(--green-light)] text-[var(--green)]" :
+                        app.stage === "Rejected" ? "bg-[var(--red-light)] text-[var(--red)]" :
+                        "bg-[var(--yellow-light)] text-[var(--yellow)]"
                       }`}>
                         {app.stage}
                       </span>
@@ -1404,22 +1413,22 @@ export default function App() {
                         const isCurrent = app.stageStep === st.step && app.stage !== "Rejected";
                         return (
                           <div key={st.step} className="flex flex-col items-center">
-                            <div className={`h-7 w-7 rounded-full flex items-center justify-center font-bold mb-1 ${
-                              isDone ? "bg-emerald-600 text-white" :
-                              isCurrent ? "bg-slate-900 text-white dark:bg-blue-600" :
-                              "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mb-1.5 transition-all ${
+                              isDone ? "bg-[var(--green)] text-white shadow-sm" :
+                              isCurrent ? "bg-[var(--accent)] text-white shadow-[0_4px_12px_rgba(201,71,40,0.3)]" :
+                              "bg-[var(--surface-soft)] text-[var(--text-muted)]"
                             }`}>
                               {isDone ? "✓" : st.step}
                             </div>
-                            <span className="text-[10px] text-slate-500">{st.label}</span>
+                            <span className="text-[10px] font-semibold text-[var(--text-soft)]">{st.label}</span>
                           </div>
                         );
                       })}
                     </div>
 
-                    <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl text-xs text-slate-600 dark:text-slate-300">
-                      <span className="font-bold text-slate-800 dark:text-slate-200 block mb-0.5">Status Update:</span>
-                      <p className="text-slate-500">{app.feedback || "Application submitted and queued for evaluation."}</p>
+                    <div className="p-4 bg-[var(--surface-soft)] rounded-[var(--radius-sm)] border border-[var(--border)] text-xs">
+                      <span className="font-extrabold text-[var(--text)] block mb-1">Status Update:</span>
+                      <p className="text-[var(--text-soft)]">{app.feedback || "Application queued for evaluation."}</p>
                     </div>
                   </div>
                 ))}
@@ -1431,33 +1440,33 @@ export default function App() {
         {/* ==================== 7. PLACED STUDENTS (COMPANY-WISE) ==================== */}
         {activeTab === "placed" && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+            <div className="p-6 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">Placed Students Directory ({filteredPlaced.length})</h2>
-                  <p className="text-xs text-slate-500">Company-wise selections and packages</p>
+                  <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Success Metrics</span>
+                  <h2 className="text-xl font-extrabold text-[var(--text)] tracking-tight">Placed Students Hall of Fame ({filteredPlaced.length})</h2>
                 </div>
 
                 <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-[var(--text-muted)]" />
                   <input
                     type="text"
                     placeholder="Search candidate, roll no..."
                     value={placedSearch}
                     onChange={(e) => setPlacedSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                    className="w-full pl-9 pr-3.5 py-2 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
 
               {/* Company Selection Tabs */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
+              <div className="flex flex-wrap gap-2 pt-1">
                 <button
                   onClick={() => setSelectedPlacedCompany("All")}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                  className={`px-3.5 py-1.5 rounded-[8px] text-xs font-bold transition cursor-pointer ${
                     selectedPlacedCompany === "All"
-                      ? "bg-slate-900 text-white dark:bg-blue-600"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                      ? "bg-[var(--accent)] text-white shadow-[0_4px_12px_rgba(201,71,40,0.2)]"
+                      : "bg-[var(--surface-soft)] text-[var(--text-soft)] hover:text-[var(--text)]"
                   }`}
                 >
                   All ({placedStudents.length})
@@ -1468,10 +1477,10 @@ export default function App() {
                     <button
                       key={cName}
                       onClick={() => setSelectedPlacedCompany(cName)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                      className={`px-3.5 py-1.5 rounded-[8px] text-xs font-bold transition cursor-pointer ${
                         selectedPlacedCompany === cName
-                          ? "bg-slate-900 text-white dark:bg-blue-600"
-                          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                          ? "bg-[var(--accent)] text-white shadow-[0_4px_12px_rgba(201,71,40,0.2)]"
+                          : "bg-[var(--surface-soft)] text-[var(--text-soft)] hover:text-[var(--text)]"
                       }`}
                     >
                       {cName} ({count})
@@ -1486,24 +1495,24 @@ export default function App() {
               {filteredPlaced.map(student => (
                 <div
                   key={student.id}
-                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 hover:border-slate-500 shadow-md space-y-3 transition-all"
+                  className="p-6 rounded-[var(--radius-md)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-1 space-y-4 transition-all"
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">{student.name}</h4>
-                      <p className="text-[11px] text-slate-400 font-mono">{student.rollNo} • {student.branch}</p>
+                      <h4 className="font-extrabold text-sm text-[var(--text)]">{student.name}</h4>
+                      <p className="text-[11px] text-[var(--text-muted)] font-mono mt-0.5">{student.rollNo} • {student.branch}</p>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">{student.packageLpa} LPA</span>
+                    <span className="text-xs font-extrabold text-[var(--accent)] bg-[var(--accent-light)] px-3 py-1 rounded-full">{student.packageLpa} LPA</span>
                   </div>
 
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl text-xs space-y-1 border border-slate-200 dark:border-slate-700">
+                  <div className="p-3.5 bg-[var(--surface-soft)] rounded-[var(--radius-sm)] border border-[var(--border)] text-xs space-y-1.5">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Placed at:</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{student.company}</span>
+                      <span className="text-[var(--text-muted)]">Placed at:</span>
+                      <span className="font-extrabold text-[var(--text)]">{student.company}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Role:</span>
-                      <span className="text-slate-600 dark:text-slate-300 truncate max-w-[130px]">{student.role}</span>
+                      <span className="text-[var(--text-muted)]">Role:</span>
+                      <span className="font-semibold text-[var(--text-soft)] truncate max-w-[130px]">{student.role}</span>
                     </div>
                   </div>
                 </div>
@@ -1515,41 +1524,41 @@ export default function App() {
         {/* ==================== 8. ADMIN PANEL TAB ==================== */}
         {activeTab === "admin" && currentUser?.role === "admin" && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <div className="p-6 rounded-[var(--radius-lg)] bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)] flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Admin Placement Console</h2>
-                <p className="text-xs text-slate-500">Manage placement drives and candidate records</p>
+                <span className="text-[9px] font-extrabold tracking-[1.5px] text-[var(--accent)] uppercase block">Control Console</span>
+                <h2 className="text-xl font-extrabold text-[var(--text)] tracking-tight">Admin Placement Center</h2>
               </div>
               <button
                 onClick={() => setShowAddJobModal(true)}
-                className="px-3 py-1.5 bg-slate-900 text-white dark:bg-blue-600 text-xs font-bold rounded-xl"
+                className="px-4 py-2 bg-[var(--accent)] text-white text-xs font-bold rounded-[10px] shadow-[0_4px_12px_rgba(201,71,40,0.2)] hover:bg-[var(--accent-dark)] transition cursor-pointer"
               >
                 + Post New Job
               </button>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div className="bg-[var(--surface)] rounded-[var(--radius-md)] border border-[var(--border)] overflow-hidden shadow-[var(--shadow-sm)]">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase font-semibold">
+                <thead className="bg-[var(--surface-soft)] text-[var(--text-muted)] uppercase font-extrabold tracking-wider text-[10px]">
                   <tr>
-                    <th className="px-5 py-3">Role</th>
-                    <th className="px-5 py-3">Company</th>
-                    <th className="px-5 py-3">Package</th>
-                    <th className="px-5 py-3">Applicants</th>
-                    <th className="px-5 py-3 text-right">Action</th>
+                    <th className="px-6 py-4">Role</th>
+                    <th className="px-6 py-4">Company</th>
+                    <th className="px-6 py-4">Package</th>
+                    <th className="px-6 py-4">Applicants</th>
+                    <th className="px-6 py-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody className="divide-y divide-[var(--border)]">
                   {jobs.map(j => (
-                    <tr key={j.id}>
-                      <td className="px-5 py-3.5 font-bold">{j.role}</td>
-                      <td className="px-5 py-3.5">{j.company}</td>
-                      <td className="px-5 py-3.5 text-emerald-600 font-semibold">{j.salary}</td>
-                      <td className="px-5 py-3.5">{j.applicants}</td>
-                      <td className="px-5 py-3.5 text-right">
+                    <tr key={j.id} className="hover:bg-[var(--surface-soft)] transition">
+                      <td className="px-6 py-4 font-extrabold text-[var(--text)]">{j.role}</td>
+                      <td className="px-6 py-4 text-[var(--text-soft)]">{j.company}</td>
+                      <td className="px-6 py-4 text-[var(--accent)] font-bold">{j.salary}</td>
+                      <td className="px-6 py-4 font-semibold text-[var(--text)]">{j.applicants}</td>
+                      <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => setJobs(jobs.filter(x => x.id !== j.id))}
-                          className="text-rose-600 font-bold hover:underline"
+                          className="text-[var(--red)] font-bold hover:underline cursor-pointer"
                         >
                           Delete
                         </button>
@@ -1565,35 +1574,35 @@ export default function App() {
 
       {/* ================= MODAL: JOB DETAILS ================= */}
       {selectedJobDetails && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-7 w-full max-w-lg shadow-[var(--shadow-lg)] space-y-4">
             <div className="flex justify-between items-start">
               <div>
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-[var(--surface-soft)] text-[var(--text-soft)] border border-[var(--border)]">
                   {selectedJobDetails.badge}
                 </span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1">{selectedJobDetails.role}</h3>
-                <p className="text-xs font-semibold text-slate-500">{selectedJobDetails.company} • {selectedJobDetails.location}</p>
+                <h3 className="text-lg font-extrabold text-[var(--text)] tracking-tight mt-2">{selectedJobDetails.role}</h3>
+                <p className="text-xs font-semibold text-[var(--text-soft)]">{selectedJobDetails.company} • {selectedJobDetails.location}</p>
               </div>
-              <span className="text-xs font-bold text-emerald-600">{selectedJobDetails.salary}</span>
+              <span className="text-xs font-extrabold text-[var(--accent)] bg-[var(--accent-light)] px-3 py-1 rounded-full">{selectedJobDetails.salary}</span>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs text-[var(--text-soft)] leading-relaxed">
               {selectedJobDetails.description}
             </p>
 
-            <div className="space-y-1 text-xs">
-              <span className="font-bold text-slate-700 dark:text-slate-300 block">Requirements:</span>
-              <ul className="list-disc pl-4 text-slate-500 space-y-0.5">
+            <div className="space-y-1.5 text-xs">
+              <span className="font-extrabold text-[var(--text)] block uppercase tracking-wider text-[10px]">Requirements:</span>
+              <ul className="list-disc pl-4 text-[var(--text-soft)] space-y-1">
                 {selectedJobDetails.requirements.map((r, i) => <li key={i}>{r}</li>)}
               </ul>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+            <div className="pt-4 border-t border-[var(--border)] flex gap-2">
               <button
                 type="button"
                 onClick={() => setSelectedJobDetails(null)}
-                className="flex-1 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                className="flex-1 py-2.5 rounded-[10px] border border-[var(--border)] text-xs font-bold text-[var(--text)] hover:bg-[var(--surface-soft)] transition cursor-pointer"
               >
                 Close
               </button>
@@ -1603,7 +1612,7 @@ export default function App() {
                   handleApplyJob(selectedJobDetails);
                   setSelectedJobDetails(null);
                 }}
-                className="flex-1 py-2 bg-slate-900 text-white dark:bg-blue-600 rounded-xl text-xs font-bold"
+                className="flex-1 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-dark)] text-white rounded-[10px] text-xs font-bold shadow-[0_4px_12px_rgba(201,71,40,0.2)] transition cursor-pointer"
               >
                 Apply for Position
               </button>
@@ -1614,52 +1623,52 @@ export default function App() {
 
       {/* ================= MODAL: ADD JOB ================= */}
       {showAddJobModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-xl space-y-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">Post New Campus Drive</h3>
-            <form onSubmit={handleAddJobSubmit} className="space-y-3">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-7 w-full max-w-md shadow-[var(--shadow-lg)] space-y-4">
+            <h3 className="text-base font-extrabold text-[var(--text)] tracking-tight">Post New Campus Drive</h3>
+            <form onSubmit={handleAddJobSubmit} className="space-y-3.5">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Company</label>
+                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Company</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Microsoft"
                   value={newJob.company}
                   onChange={(e) => setNewJob({ ...newJob, company: e.target.value })}
-                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                  className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Role Title</label>
+                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Role Title</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Software Engineer"
                   value={newJob.role}
                   onChange={(e) => setNewJob({ ...newJob, role: e.target.value })}
-                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                  className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-500 mb-1">Salary / CTC</label>
+                  <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Salary / CTC</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. 18 LPA"
                     value={newJob.salary}
                     onChange={(e) => setNewJob({ ...newJob, salary: e.target.value })}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                    className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-500 mb-1">Tier</label>
+                  <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Tier</label>
                   <select
                     value={newJob.badge}
                     onChange={(e) => setNewJob({ ...newJob, badge: e.target.value as "Super Dream" | "Dream" | "Regular" })}
-                    className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
+                    className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)]"
                   >
                     <option value="Super Dream">Super Dream</option>
                     <option value="Dream">Dream</option>
@@ -1669,27 +1678,27 @@ export default function App() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Description</label>
+                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Description</label>
                 <textarea
                   rows={3}
                   placeholder="Role overview..."
                   value={newJob.description}
                   onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
-                  className="w-full p-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 resize-none"
+                  className="w-full p-2.5 text-xs rounded-[10px] bg-[var(--surface-soft)] border border-[var(--border)] text-[var(--text)] resize-none"
                 />
               </div>
 
-              <div className="pt-2 flex gap-2">
+              <div className="pt-3 flex gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddJobModal(false)}
-                  className="flex-1 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                  className="flex-1 py-2.5 rounded-[10px] border border-[var(--border)] text-xs font-bold text-[var(--text)] hover:bg-[var(--surface-soft)] transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 bg-slate-900 text-white dark:bg-blue-600 rounded-xl text-xs font-bold"
+                  className="flex-1 py-2.5 bg-[var(--accent)] hover:bg-[var(--accent-dark)] text-white rounded-[10px] text-xs font-bold shadow-[0_4px_12px_rgba(201,71,40,0.2)] transition cursor-pointer"
                 >
                   Publish Drive
                 </button>
@@ -1700,8 +1709,8 @@ export default function App() {
       )}
 
       {/* ================= FOOTER ================= */}
-      <footer className="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-400">
-        <p>© 2026 ApexPlacement Portal • Campus Training & Recruitment Directorate</p>
+      <footer className="mt-auto border-t border-[var(--border)] bg-[var(--surface)] py-6 text-center text-xs text-[var(--text-muted)]">
+        <p>© 2026 ApexPlacement • Campus Training & Recruitment Directorate</p>
       </footer>
     </div>
   );
